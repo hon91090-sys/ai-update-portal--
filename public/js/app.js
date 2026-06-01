@@ -284,13 +284,18 @@
     let posts = state.currentCategory === 'all' ? [...state.posts] : state.posts.filter(p => p.category_l1 === state.currentCategory);
     if (state.searchQuery) {
       const q = state.searchQuery.toLowerCase();
-      posts = posts.filter(p => p.title.toLowerCase().includes(q) || p.program_l2.toLowerCase().includes(q) || p.company_l3.toLowerCase().includes(q));
+      posts = posts.filter(p => {
+        const t = getI18nText(p.title).toLowerCase();
+        const prog = (p.program_l2 || '').toLowerCase();
+        const comp = (p.company_l3 || p.company || '').toLowerCase();
+        return t.includes(q) || prog.includes(q) || comp.includes(q);
+      });
     }
     if (state.filterTag !== 'all') {
       posts = posts.filter(p => state.filterTag === 'Free' || state.filterTag === 'Paid' ? p.status_badge === state.filterTag : p.tech_status === state.filterTag);
     }
     if (state.companyFilters && state.companyFilters.length > 0) {
-      posts = posts.filter(p => state.companyFilters.includes(p.company_l3));
+      posts = posts.filter(p => state.companyFilters.includes(p.company_l3 || p.company));
     }
     if (state.currentTab === 'trending') {
       posts.sort((a, b) => (b.views || 0) - (a.views || 0));
@@ -310,7 +315,8 @@
     }
     return posts.map((p, i) => {
       const cat = getCategoryById(p.category_l1);
-      const logo = getCompanyLogo(p.company_l3);
+      const companyName = p.company_l3 || p.company || '';
+      const logo = getCompanyLogo(companyName);
       const bk = state.bookmarks.has(p.id);
       const titleStr = getI18nText(p.title);
       const summaryStr = getI18nText(p.summary_3lines ? p.summary_3lines : p.summary);
@@ -321,9 +327,9 @@
           <div class="news-card-body">
             <div class="card-top-row">
               <div class="card-program-logo" style="background:${logo.bg};color:${logo.color}">${logo.icon}</div>
-              <span class="card-program-name">${p.program_l2}</span>
+              <span class="card-program-name">${p.program_l2 || 'AI Tool'}</span>
               <span class="card-dot"></span>
-              <span class="card-company">${p.company_l3}</span>
+              <span class="card-company">${companyName}</span>
               <span class="card-dot"></span>
               <span class="card-time">${relativeTime(p.created_at)}</span>
             </div>
@@ -360,7 +366,8 @@
     state.currentView = 'detail';
     state.currentPostId = postId;
     const cat = getCategoryById(post.category_l1);
-    const logo = getCompanyLogo(post.company_l3);
+    const companyName = post.company_l3 || post.company || '';
+    const logo = getCompanyLogo(companyName);
     const bk = state.bookmarks.has(post.id);
     
     let comments = [];
