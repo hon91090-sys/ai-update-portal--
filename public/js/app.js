@@ -503,21 +503,21 @@
 
     sb.innerHTML = `
       <div class="resize-handle" id="resize-handle"></div>
-      <div class="right-section">
-        <div class="right-section-header">
-          <h3 class="right-section-title">🔥 실시간 트렌딩</h3>
-          <span class="right-section-more">더보기 →</span>
+      <div class="right-section" style="padding: 16px; background: var(--bg-secondary); border-radius: 12px; margin-bottom: 20px;">
+        <div class="right-section-header" style="margin-bottom: 16px;">
+          <h3 class="right-section-title" style="font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 8px;">🔥 ${getI18nText({ko: '실시간 트렌딩', en: 'Trending Now'})}</h3>
         </div>
-        <div class="trending-list">
+        <div class="trending-list" style="display: flex; flex-direction: column; gap: 16px;">
           ${trending.map((p, i) => {
             const cat = getCategoryById(p.category_l1);
+            const titleText = getI18nText(p.title);
             return `
-              <div class="trending-item" data-id="${p.id}">
-                <span class="trending-rank ${i < 3 ? 'top' : ''}">${i + 1}</span>
-                <div class="trending-info">
-                  <div class="trending-title">${p.title}</div>
-                  <div class="trending-meta">
-                    <span class="trending-tag" style="background:${cat.color}12;color:${cat.color}">${p.program_l2}</span>
+              <div class="trending-item" data-id="${p.id}" style="display: flex; gap: 12px; align-items: flex-start; cursor: pointer; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+                <span class="trending-rank ${i < 3 ? 'top' : ''}" style="font-size: 18px; font-weight: 800; color: ${i < 3 ? 'var(--accent-blue)' : 'var(--text-tertiary)'}; min-width: 20px;">${i + 1}</span>
+                <div class="trending-info" style="flex: 1;">
+                  <div class="trending-title" style="font-size: 14px; font-weight: 600; line-height: 1.4; color: var(--text-primary); margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${titleText}</div>
+                  <div class="trending-meta" style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-tertiary);">
+                    <span class="trending-tag" style="background:${cat.color}15; color:${cat.color}; padding: 2px 6px; border-radius: 4px; font-weight: 600;">${p.program_l2 || 'AI'}</span>
                     <span>👁 ${fmtViews(p.views||0)}</span>
                   </div>
                 </div>
@@ -528,42 +528,27 @@
 
       <div class="right-section">
         <div class="right-section-header">
-          <h3 class="right-section-title">🚀 스폰서 광고</h3>
-          <span class="right-section-more" style="font-size:10px; color:var(--text-tertiary)">AD</span>
+          <h3 class="right-section-title" style="font-size: 12px; color: var(--text-tertiary);">SPONSORED</h3>
         </div>
-        <a href="#" target="_blank" class="ad-banner-link">
-          <div class="ad-banner">
-            <div class="ad-banner-content">
-              <span class="ad-banner-badge">SPONSORED</span>
-              <strong class="ad-banner-title">차세대 AI 코딩 도구</strong>
-              <p class="ad-banner-desc">지금 바로 30일 무료 체험으로 개발 생산성을 2배 높이세요.</p>
+        <a href="#" target="_blank" class="ad-banner-link" style="text-decoration: none;">
+          <div class="ad-banner" style="background: linear-gradient(135deg, #1A73E8 0%, #7C3AED 100%); border-radius: 12px; padding: 20px; color: white; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(26,115,232,0.3);">
+            <div style="position: relative; z-index: 2;">
+              <div style="font-size: 10px; font-weight: 800; letter-spacing: 1px; margin-bottom: 8px; opacity: 0.8;">ADVERTISEMENT</div>
+              <strong style="display: block; font-size: 18px; font-weight: 800; margin-bottom: 8px;">차세대 AI 코딩 IDE</strong>
+              <p style="font-size: 13px; line-height: 1.5; opacity: 0.9; margin-bottom: 12px;">지금 바로 30일 무료 체험으로 개발 생산성을 2배 높이세요.</p>
+              <span style="display: inline-block; background: white; color: #1A73E8; font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 20px;">무료로 시작하기 →</span>
             </div>
+            <div style="position: absolute; right: -20px; bottom: -20px; font-size: 100px; opacity: 0.1; z-index: 1;">🚀</div>
           </div>
         </a>
       </div>
 
-      <div class="right-section">
-        <div class="right-section-header">
-          <h3 class="right-section-title">✨ AI 인사이트</h3>
+      <div class="right-section" style="margin-top: 24px; padding: 16px; background: var(--bg-secondary); border-radius: 12px; border: 1px solid var(--border);">
+        <div class="right-section-header" style="margin-bottom: 12px;">
+          <h3 class="right-section-title" style="font-size: 14px; font-weight: 700; color: var(--accent-blue);">✨ AI Insight</h3>
         </div>
-        <div class="insight-card">
-          <div class="insight-label">🧠 AI 트렌드 분석</div>
-          <div class="insight-text">
-            이번 주 가장 주목할 트렌드는 <strong>자율 AI 에이전트</strong>의 부상입니다.
-            Cursor Background Agent, Devin 2.0, AutoGPT 2.0 등 자율적으로 작업을 수행하는 에이전트 모델이 빠르게 성숙하고 있습니다.
-          </div>
-          <div class="insight-source">Gemini 2.0 Flash 분석 · 매 시간 자동 갱신</div>
-        </div>
-      </div>
-
-      <div class="right-section">
-        <div class="right-section-header">
-          <h3 class="right-section-title">⚡ 최근 활동</h3>
-        </div>
-        <div class="activity-list">
-          <div class="activity-item"><div class="activity-dot" style="background:var(--cat-video)"></div><div class="activity-content"><div class="activity-text"><strong>AI크리에이터</strong>님이 Sora 2.0에 댓글</div><div class="activity-time">15분 전</div></div></div>
-          <div class="activity-item"><div class="activity-dot" style="background:var(--cat-code)"></div><div class="activity-content"><div class="activity-text"><strong>새 기사</strong> Cursor 2.0 발행</div><div class="activity-time">45분 전</div></div></div>
-          <div class="activity-item"><div class="activity-dot" style="background:var(--cat-llm)"></div><div class="activity-content"><div class="activity-text"><strong>GPT-5</strong> 조회수 2.8K 돌파</div><div class="activity-time">1시간 전</div></div></div>
+        <div class="insight-text" style="font-size: 13px; line-height: 1.6; color: var(--text-secondary);">
+          이번 주 가장 주목할 트렌드는 <strong>자율 AI 에이전트</strong>의 부상입니다. 모델들이 스스로 코딩하고 배포하는 수준에 도달하고 있습니다.
         </div>
       </div>
     `;

@@ -304,8 +304,8 @@ Return ONLY the JSON array, no other text.`;
       ...article,
       id: Date.now() + i,
       created_at: new Date(Date.now() - i * 60000).toISOString(), // slightly staggered times
-      views: Math.floor(Math.random() * 1000) + 100,
-      comments_count: Math.floor(Math.random() * 10),
+      views: 0,
+      comments_count: 0,
       source: 'real_news_ai_summary'
     }));
 

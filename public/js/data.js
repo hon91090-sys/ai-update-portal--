@@ -90,7 +90,7 @@ const INITIAL_POSTS = [
     company: "OpenAI",
     url: "https://openai.com",
     created_at: new Date(Date.now() - 3600000).toISOString(),
-    views: 125430,
+    views: 0,
     is_important: true
   },
   {
@@ -103,7 +103,7 @@ const INITIAL_POSTS = [
     company: "Anthropic",
     url: "https://anthropic.com",
     created_at: new Date(Date.now() - 90 * 86400000).toISOString(),
-    views: 29000,
+    views: 0,
     is_important: false
   },
   {
@@ -116,7 +116,7 @@ const INITIAL_POSTS = [
     company: "Suno",
     url: "https://suno.ai",
     created_at: new Date(Date.now() - 50 * 86400000).toISOString(),
-    views: 31200,
+    views: 0,
     is_important: true
   },
   {
@@ -129,7 +129,7 @@ const INITIAL_POSTS = [
     company: "Cognition",
     url: "https://cognition-labs.com",
     created_at: new Date(Date.now() - 75 * 86400000).toISOString(),
-    views: 41000,
+    views: 0,
     is_important: true
   },
   {
@@ -142,7 +142,7 @@ const INITIAL_POSTS = [
     company: "Meta",
     url: "https://llama.meta.com",
     created_at: new Date(Date.now() - 86400000).toISOString(),
-    views: 98000,
+    views: 0,
     is_important: true
   },
   {
@@ -155,7 +155,7 @@ const INITIAL_POSTS = [
     company: "OpenAI",
     url: "https://openai.com/sora",
     created_at: new Date(Date.now() - 150000000).toISOString(),
-    views: 210000,
+    views: 0,
     is_important: true
   },
   {
@@ -168,7 +168,7 @@ const INITIAL_POSTS = [
     company: "Google",
     url: "https://ai.google.dev",
     created_at: new Date(Date.now() - 24000000).toISOString(),
-    views: 45000,
+    views: 0,
     is_important: false
   },
   {
@@ -181,7 +181,7 @@ const INITIAL_POSTS = [
     company: "Anysphere",
     url: "https://cursor.com",
     created_at: new Date(Date.now() - 15000000).toISOString(),
-    views: 82000,
+    views: 0,
     is_important: true
   }
 ];
