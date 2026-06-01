@@ -15,6 +15,7 @@
     companyFilters: [],
     bookmarks: new Set(JSON.parse(localStorage.getItem('aip_bookmarks') || '[]')),
     posts: [],
+    notifications: [],
     isLoading: false,
     lang: 'en'
   };
@@ -42,7 +43,7 @@
   const $$ = (s) => document.querySelectorAll(s);
 
   // ===== User Settings (Customization) =====
-  const defaultPrefs = { theme: 'light', viewMode: 'card', showRightSidebar: true };
+  const defaultPrefs = { theme: 'light', viewMode: 'card', showRightSidebar: true, alertKeywords: [] };
   const prefs = Object.assign({}, defaultPrefs, JSON.parse(localStorage.getItem('aip_prefs') || '{}'));
 
   function savePrefs() {
@@ -643,6 +644,17 @@
   function goHome() {
     state.currentView = 'feed';
     state.currentPostId = null;
+    state.currentCategory = 'all';
+    state.searchQuery = '';
+    state.companyFilters = [];
+    state.currentTab = 'latest';
+    
+    const si = $('#search-input');
+    if (si) si.value = '';
+    $$('.header-tab').forEach(t => t.classList.remove('active'));
+    const lt = $('.header-tab[data-tab="latest"]');
+    if (lt) lt.classList.add('active');
+
     renderFeed();
     renderSidebar();
     history.pushState({}, '', '/');
@@ -771,6 +783,14 @@
               <button class="settings-btn" data-val="false">숨김 (집중 모드)</button>
             </div>
           </div>
+          <div class="settings-group">
+            <div class="settings-label">관심 키워드 알림</div>
+            <div class="settings-options" id="setting-keywords" style="display:flex; flex-wrap:wrap; gap:6px;">
+              ${CATEGORIES.filter(c => c.id !== 'all').map(c => 
+                `<button class="settings-btn keyword-btn" data-id="${c.id}">${c.emoji} ${getI18nText(c.label)}</button>`
+              ).join('')}
+            </div>
+          </div>
         </div>
       `);
       m = $('#settings-modal');
@@ -797,6 +817,18 @@
         savePrefs();
         updateSettingsUI();
       });
+      $('#setting-keywords').addEventListener('click', e => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        const kw = btn.dataset.id;
+        if (prefs.alertKeywords.includes(kw)) {
+          prefs.alertKeywords = prefs.alertKeywords.filter(k => k !== kw);
+        } else {
+          prefs.alertKeywords.push(kw);
+        }
+        savePrefs();
+        updateSettingsUI();
+      });
     }
     
     updateSettingsUI();
@@ -809,28 +841,92 @@
     $$('#setting-theme .settings-btn').forEach(b => b.classList.toggle('active', b.dataset.val === prefs.theme));
     $$('#setting-view .settings-btn').forEach(b => b.classList.toggle('active', b.dataset.val === prefs.viewMode));
     $$('#setting-sidebar .settings-btn').forEach(b => b.classList.toggle('active', b.dataset.val === String(prefs.showRightSidebar)));
+    $$('#setting-keywords .settings-btn').forEach(b => {
+      b.classList.toggle('active', prefs.alertKeywords.includes(b.dataset.id));
+    });
   }
 
   // ===== Notifications =====
-  let hasNewNotification = false;
-  
+  function addNotification(type, message, linkPostId) {
+    state.notifications.unshift({
+      id: Date.now() + Math.random(),
+      type,
+      message,
+      time: '방금 전',
+      read: false,
+      postId: linkPostId
+    });
+    updateNotificationBadge();
+  }
+
+  function updateNotificationBadge() {
+    const unread = state.notifications.filter(n => !n.read).length;
+    const badge = $('#notification-badge');
+    if (badge) {
+      if (unread > 0) {
+        badge.style.display = 'flex';
+        badge.textContent = unread > 9 ? '9+' : unread;
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+  }
+
   function triggerMockNotification() {
+    setTimeout(() => addNotification('like', '❤️ 누군가 회원님의 댓글을 좋아합니다.', 1), 4000);
+    setTimeout(() => addNotification('reply', '💬 회원님의 댓글에 새로운 답글이 달렸습니다.', 2), 8000);
     setTimeout(() => {
-      hasNewNotification = true;
-      const badge = $('#notification-badge');
-      if (badge) badge.style.display = 'block';
-    }, 3000);
+      if (prefs.alertKeywords && prefs.alertKeywords.length > 0) {
+        const targetKw = prefs.alertKeywords[0];
+        const catObj = getCategoryById(targetKw);
+        const catLabel = getI18nText(catObj.label);
+        addNotification('keyword', `🔔 관심 키워드 [${catLabel}]에 새로운 뉴스가 업데이트 되었습니다.`, 31);
+      }
+    }, 12000);
   }
 
   function readNotifications() {
-    const badge = $('#notification-badge');
-    if (hasNewNotification) {
-      hasNewNotification = false;
-      if (badge) badge.style.display = 'none';
-      showToast('새 업데이트 알림을 모두 확인했습니다.', 'success');
-    } else {
-      showToast('새 업데이트 알림이 없습니다.', 'info');
+    let m = $('#noti-center');
+    if (!m) {
+      document.body.insertAdjacentHTML('beforeend', `
+        <div class="noti-center-overlay" id="noti-center" onclick="if(event.target===this) this.classList.remove('visible')">
+          <div class="noti-center-panel" style="position:absolute; right:20px; top:60px; width:340px; background:var(--bg-primary); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,0.15); border:1px solid var(--border); overflow:hidden; display:flex; flex-direction:column; max-height:80vh;">
+            <div class="noti-header" style="display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid var(--border);">
+              <h3 style="font-size:16px; font-weight:800; margin:0; color:var(--text-primary);">알림 센터</h3>
+              <button class="modal-close" style="position:static" onclick="document.getElementById('noti-center').classList.remove('visible')">✕</button>
+            </div>
+            <div class="noti-list" id="noti-list" style="overflow-y:auto; flex:1;"></div>
+          </div>
+        </div>
+      `);
+      m = $('#noti-center');
     }
+    
+    const list = $('#noti-list');
+    if (state.notifications.length === 0) {
+      list.innerHTML = \`<div style="padding:40px 20px; text-align:center; color:var(--text-tertiary); font-size:13px;">새로운 알림이 없습니다.</div>\`;
+    } else {
+      list.innerHTML = state.notifications.map(n => \`
+        <div class="noti-item \${n.read ? 'read' : ''}" onclick="app.notiClick(\${n.postId})" style="padding:16px; border-bottom:1px solid var(--border); cursor:pointer; display:flex; gap:12px; align-items:flex-start; background: \${n.read ? 'transparent' : 'var(--bg-secondary)'}; transition: background 0.2s;">
+          <div style="font-size:18px; margin-top:2px;">\${n.type === 'like' ? '❤️' : n.type === 'reply' ? '💬' : '🔔'}</div>
+          <div style="flex:1;">
+            <div style="font-size:13px; color:var(--text-primary); line-height:1.4; margin-bottom:4px;">\${n.message}</div>
+            <div style="font-size:11px; color:var(--text-tertiary);">\${n.time}</div>
+          </div>
+        </div>
+      \`).join('');
+    }
+
+    state.notifications.forEach(n => n.read = true);
+    updateNotificationBadge();
+    
+    m.classList.add('visible');
+  }
+
+  function notiClick(postId) {
+    const m = $('#noti-center');
+    if(m) m.classList.remove('visible');
+    if (postId) showDetail(postId);
   }
 
   // ===== Global Events =====
@@ -877,6 +973,6 @@
   }
 
   // ===== Public API =====
-  window.app = { showDetail, toggleBookmark, submitComment, showAuthModal, hideAuthModal, emailLogin, showSettingsModal, readNotifications, goHome, showToast, refreshFeed, triggerFetch, toggleLang };
+  window.app = { showDetail, notiClick, toggleBookmark, submitComment, showAuthModal, hideAuthModal, emailLogin, showSettingsModal, readNotifications, goHome, showToast, refreshFeed, triggerFetch, toggleLang };
   document.addEventListener('DOMContentLoaded', () => { init(); triggerMockNotification(); });
 })();
