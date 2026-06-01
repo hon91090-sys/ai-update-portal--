@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "name": "ai-update-portal-v2",
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/public/$1"
+    }
+  ]
+}

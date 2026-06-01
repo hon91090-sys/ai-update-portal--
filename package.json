@@ -1,0 +1,11 @@
+{
+  "name": "ai-update-portal-v2.5",
+  "version": "2.5.0",
+  "description": "AI Autonomous News Portal",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {}
+}
