@@ -271,11 +271,11 @@
         </div>
         <div class="filter-chips" id="filter-chips">
           <button class="filter-chip ${state.filterTag === 'all' ? 'active' : ''}" data-f="all" data-i18n="filter_all">${getI18nText({ko: '전체', en: 'All'})}</button>
-          <button class="filter-chip ${state.filterTag === 'Free' ? 'active' : ''}" data-f="Free">🟢 Free</button>
-          <button class="filter-chip ${state.filterTag === 'Paid' ? 'active' : ''}" data-f="Paid">🟡 Paid</button>
-          <button class="filter-chip ${state.filterTag === 'Beta' ? 'active' : ''}" data-f="Beta">🔮 Beta</button>
-          <button class="filter-chip ${state.filterTag === 'Stable' ? 'active' : ''}" data-f="Stable">✅ Stable</button>
-          <button class="filter-chip ${state.filterTag === 'Alpha' ? 'active' : ''}" data-f="Alpha">🔴 Alpha</button>
+          <button class="filter-chip ${state.filterTag === 'Free' ? 'active' : ''}" data-f="Free">${getStatusText('Free')}</button>
+          <button class="filter-chip ${state.filterTag === 'Paid' ? 'active' : ''}" data-f="Paid">${getStatusText('Paid')}</button>
+          <button class="filter-chip ${state.filterTag === 'Beta' ? 'active' : ''}" data-f="Beta">${getStatusText('Beta')}</button>
+          <button class="filter-chip ${state.filterTag === 'Stable' ? 'active' : ''}" data-f="Stable">${getStatusText('Stable')}</button>
+          <button class="filter-chip ${state.filterTag === 'Alpha' ? 'active' : ''}" data-f="Alpha">${getStatusText('Alpha')}</button>
         </div>
         ${renderCompanyFilters()}
         <div class="card-list ${prefs.viewMode === 'list' ? 'view-list' : ''}" id="card-list">${renderCards(posts)}</div>
@@ -393,6 +393,8 @@
   async function showDetail(postId) {
     const post = state.posts.find(p => p.id === postId);
     if (!post) return;
+
+    post.views = (post.views || 0) + 1; // Increment app-internal views
 
     state.currentView = 'detail';
     state.currentPostId = postId;
@@ -536,7 +538,11 @@
   // ===== Right Sidebar + Resize =====
   function renderRightSidebar() {
     const sb = $('#right-sidebar');
-    const trending = [...state.posts].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 6);
+    const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+    const trending = [...state.posts]
+      .filter(p => new Date(p.created_at).getTime() >= oneWeekAgo)
+      .sort((a, b) => (b.views || 0) - (a.views || 0))
+      .slice(0, 6);
 
     sb.innerHTML = `
       <!-- Unified Right Sidebar Container -->
@@ -1031,6 +1037,6 @@
   }
 
   // ===== Public API =====
-  window.app = { showDetail, notiClick, toggleBookmark, submitComment, showAuthModal, hideAuthModal, emailLogin, showSettingsModal, readNotifications, goHome, goBackToFeed, toggleKeywordAlert, showToast, refreshFeed, triggerFetch, toggleLang };
+  window.app = { state, showDetail, notiClick, toggleBookmark, submitComment, showAuthModal, hideAuthModal, emailLogin, showSettingsModal, readNotifications, goHome, goBackToFeed, toggleKeywordAlert, showToast, refreshFeed, triggerFetch, toggleLang };
   document.addEventListener('DOMContentLoaded', () => { init(); triggerMockNotification(); });
 })();
