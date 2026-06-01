@@ -43,7 +43,7 @@
   const $$ = (s) => document.querySelectorAll(s);
 
   // ===== User Settings (Customization) =====
-  const defaultPrefs = { theme: 'light', viewMode: 'card', showRightSidebar: true, alertKeywords: [] };
+  const defaultPrefs = { theme: 'light', viewMode: 'card', showRightSidebar: true, alertKeywords: [], masterAlert: true };
   const prefs = Object.assign({}, defaultPrefs, JSON.parse(localStorage.getItem('aip_prefs') || '{}'));
 
   function savePrefs() {
@@ -214,12 +214,15 @@
     return `
       <div class="company-filters" id="company-filters">
         <span style="font-size:12px; font-weight:700; color:var(--text-tertiary); margin-right:4px; display:flex; align-items:center;">${getI18nText({ko: '🏢 관련 기업/기관 필터:', en: '🏢 Company Filter:'})}</span>
-        ${companies.map(c => `
-          <label class="company-checkbox-label">
+        ${companies.map(c => {
+          const logo = getCompanyLogo(c);
+          return `
+          <label class="company-checkbox-label" style="display:flex; align-items:center; gap:4px;">
             <input type="checkbox" value="${c}" ${state.companyFilters.includes(c) ? 'checked' : ''}>
+            <div style="width:16px; height:16px; border-radius:4px; background:${logo.bg}; color:${logo.color}; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800;">${logo.icon}</div>
             ${c}
           </label>
-        `).join('')}
+        `}).join('')}
       </div>
     `;
   }
@@ -242,7 +245,10 @@
         <div class="feed-header">
           <div class="feed-header-top">
             <h1 class="feed-title">${state.currentCategory === 'all' ? getI18nText({ko: '오늘의 AI 업데이트', en: 'Today\'s AI Updates'}) : cat.emoji + ' ' + getI18nText(cat.label)}</h1>
-            <div class="feed-live-indicator"><span class="live-dot"></span> <span data-i18n="feed_live">${getI18nText({ko: '실시간', en: 'Live'})}</span></div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              ${state.currentCategory !== 'all' ? `<button class="keyword-btn ${prefs.alertKeywords.includes(state.currentCategory) ? 'active' : ''}" onclick="app.toggleKeywordAlert('${state.currentCategory}')" style="display:flex; align-items:center; gap:4px;">${prefs.alertKeywords.includes(state.currentCategory) ? '🔔 알림 받는 중' : '🔕 알림 받기'}</button>` : ''}
+              <div class="feed-live-indicator"><span class="live-dot"></span> <span data-i18n="feed_live">${getI18nText({ko: '실시간', en: 'Live'})}</span></div>
+            </div>
           </div>
           <p class="feed-subtitle">${state.currentCategory === 'all' ? getI18nText({ko: '전 세계 AI 도구의 최신 변화를 실시간으로 추적합니다', en: 'Tracking the latest AI changes in real-time'}) : getI18nText(cat.label) + ' ' + getI18nText({ko: '업데이트', en: 'Updates'})}</p>
         </div>
@@ -343,15 +349,15 @@
             <p class="card-summary">${summaryHTML}</p>
             <div class="card-bottom-row">
               <span class="badge badge-cat" data-cat="${p.category_l1}">${cat.emoji} ${getI18nText(cat.label)}</span>
-              <span class="badge badge-status ${p.status_badge === 'Paid' ? 'paid' : ''}">${p.status_badge}</span>
-              <span class="badge badge-tech ${(p.tech_status||'').toLowerCase()}">${p.tech_status||'Stable'}</span>
+              <span class="badge badge-status ${p.status_badge === 'Paid' ? 'paid' : ''}">${getStatusText(p.status_badge)}</span>
+              <span class="badge badge-tech ${(p.tech_status||'').toLowerCase()}">${getStatusText(p.tech_status||'Stable')}</span>
               <div class="card-stats">
                 <span class="card-stat">👁 ${fmtViews(p.views||0)}</span>
                 <span class="card-stat">💬 ${p.comments_count||0}</span>
               </div>
             </div>
           </div>
-          <button class="card-bookmark ${bk ? 'active' : ''}" onclick="event.stopPropagation();app.toggleBookmark(${p.id})" title="${bk ? '북마크 해제' : '북마크'}">
+          <button class="card-bookmark ${bk ? 'active' : ''}" onclick="app.toggleBookmark(event, ${p.id})" title="${bk ? '북마크 해제' : '북마크'}">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="${bk ? '#FBBF24' : 'none'}" stroke="${bk ? '#FBBF24' : 'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
             </svg>
@@ -393,11 +399,11 @@
     
     main.innerHTML = `
       <div class="main-inner detail-page visible">
-        <button class="detail-back" onclick="app.goHome()">← 피드로 돌아가기</button>
+        <button class="detail-back" onclick="app.goBackToFeed()">← 피드로 돌아가기</button>
         <div class="detail-meta-row">
           <span class="badge badge-cat" data-cat="${post.category_l1}">${cat.emoji} ${getI18nText(cat.label)}</span>
-          <span class="badge badge-status ${post.status_badge === 'Paid' ? 'paid' : ''}">${post.status_badge}</span>
-          <span class="badge badge-tech ${(post.tech_status||'').toLowerCase()}">${post.tech_status||'Stable'}</span>
+          <span class="badge badge-status ${post.status_badge === 'Paid' ? 'paid' : ''}">${getStatusText(post.status_badge)}</span>
+          <span class="badge badge-tech ${(post.tech_status||'').toLowerCase()}">${getStatusText(post.tech_status||'Stable')}</span>
           <span style="margin-left:auto;font-size:12px;color:var(--text-tertiary)">${relativeTime(post.created_at)} · 👁 ${fmtViews(post.views||0)}</span>
         </div>
 
@@ -413,7 +419,7 @@
           <a href="${post.url}" target="_blank" rel="noopener noreferrer" style="margin-left: 12px; padding: 6px 12px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; color: var(--accent-blue); background: var(--accent-blue-bg); text-decoration: none;">
             원문 출처 ↗
           </a>` : ''}
-          <button class="card-bookmark ${bk ? 'active' : ''}" style="opacity:1;position:static;margin-left:auto;font-size:20px" onclick="app.toggleBookmark(${post.id})" title="${bk ? '북마크 해제' : '북마크'}">
+          <button class="card-bookmark ${bk ? 'active' : ''}" style="opacity:1;position:static;margin-left:auto;font-size:20px" onclick="app.toggleBookmark(event, ${post.id})" title="${bk ? '북마크 해제' : '북마크'}">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="${bk ? '#FBBF24' : 'none'}" stroke="${bk ? '#FBBF24' : 'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
             </svg>
@@ -528,12 +534,15 @@
             ${trending.map((p, i) => {
               const cat = getCategoryById(p.category_l1);
               const titleText = getI18nText(p.title);
+              const companyName = p.company_l3 || p.company || '';
+              const logo = getCompanyLogo(companyName);
               return `
-                <div class="trending-item" onclick="app.showDetail(${p.id})" style="display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--bg-tertiary); cursor: pointer;">
+                <div class="trending-item" onclick="app.showDetail(${p.id})" style="display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--bg-tertiary); cursor: pointer; align-items:center;">
                   <span class="trending-rank" style="font-size: 15px; font-weight: 800; color: ${i < 3 ? 'var(--accent-red)' : 'var(--text-tertiary)'}; width: 16px; text-align: center;">${i + 1}</span>
+                  <div style="width:32px; height:32px; border-radius:8px; background:${logo.bg}; color:${logo.color}; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; flex-shrink:0;">${logo.icon}</div>
                   <div class="trending-info" style="flex: 1;">
-                    <div class="trending-title" style="font-size: 13px; font-weight: 500; line-height: 1.4; color: var(--text-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 4px;">${titleText}</div>
-                    <div class="trending-meta" style="font-size: 11px; color: var(--text-tertiary);">
+                    <div class="trending-title" style="font-size: 13.5px; font-weight: 600; line-height: 1.45; color: var(--text-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 4px; letter-spacing:-0.015em;">${titleText}</div>
+                    <div class="trending-meta" style="font-size: 11.5px; color: var(--text-tertiary);">
                       <span style="color: ${cat.color}; font-weight: 600;">${p.program_l2 || 'AI'}</span> · 👁 ${fmtViews(p.views||0)}
                     </div>
                   </div>
@@ -575,8 +584,16 @@
   }
 
   // ===== Bookmark =====
-  function toggleBookmark(id) {
-    if (state.bookmarks.has(id)) {
+  function toggleBookmark(e, id) {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    if (typeof e === 'number') { id = e; e = null; }
+    if (typeof id !== 'number') return;
+
+    const isBookmarked = state.bookmarks.has(id);
+    if (isBookmarked) {
       state.bookmarks.delete(id);
       showToast('포켓에서 제거됨', 'info');
     } else {
@@ -587,9 +604,19 @@
     const pc = $('#pocket-count');
     if (pc) pc.textContent = state.bookmarks.size;
 
-    if (state.currentView === 'feed') renderFeed();
-    else if (state.currentView === 'pocket') renderFeed();
-    else if (state.currentView === 'detail') showDetail(state.currentPostId);
+    if (e && e.currentTarget) {
+      const btn = e.currentTarget;
+      btn.classList.toggle('active', !isBookmarked);
+      btn.title = !isBookmarked ? '북마크 해제' : '북마크';
+      const svg = btn.querySelector('svg');
+      if (svg) {
+        svg.setAttribute('fill', !isBookmarked ? '#FBBF24' : 'none');
+        svg.setAttribute('stroke', !isBookmarked ? '#FBBF24' : 'currentColor');
+      }
+    } else {
+      if (state.currentView === 'feed' || state.currentView === 'pocket') renderFeed();
+      else if (state.currentView === 'detail') showDetail(state.currentPostId);
+    }
   }
 
   // ===== Comment =====
@@ -641,6 +668,14 @@
   }
 
   // ===== Navigation =====
+  function goBackToFeed() {
+    state.currentView = 'feed';
+    state.currentPostId = null;
+    renderFeed();
+    const main = $('#main-content');
+    if (main) main.scrollTop = 0;
+  }
+
   function goHome() {
     state.currentView = 'feed';
     state.currentPostId = null;
@@ -784,11 +819,10 @@
             </div>
           </div>
           <div class="settings-group">
-            <div class="settings-label">관심 키워드 알림</div>
-            <div class="settings-options" id="setting-keywords" style="display:flex; flex-wrap:wrap; gap:6px;">
-              ${CATEGORIES.filter(c => c.id !== 'all').map(c => 
-                `<button class="settings-btn keyword-btn" data-id="${c.id}">${c.emoji} ${getI18nText(c.label)}</button>`
-              ).join('')}
+            <div class="settings-label">전체 알림 수신</div>
+            <div class="settings-options" id="setting-master-alert">
+              <button class="settings-btn" data-val="true">🔔 켜기</button>
+              <button class="settings-btn" data-val="false">🔕 끄기</button>
             </div>
           </div>
         </div>
@@ -817,15 +851,9 @@
         savePrefs();
         updateSettingsUI();
       });
-      $('#setting-keywords').addEventListener('click', e => {
-        const btn = e.target.closest('button');
-        if (!btn) return;
-        const kw = btn.dataset.id;
-        if (prefs.alertKeywords.includes(kw)) {
-          prefs.alertKeywords = prefs.alertKeywords.filter(k => k !== kw);
-        } else {
-          prefs.alertKeywords.push(kw);
-        }
+      $('#setting-master-alert').addEventListener('click', e => {
+        if(e.target.tagName !== 'BUTTON') return;
+        prefs.masterAlert = e.target.dataset.val === 'true';
         savePrefs();
         updateSettingsUI();
       });
@@ -841,9 +869,7 @@
     $$('#setting-theme .settings-btn').forEach(b => b.classList.toggle('active', b.dataset.val === prefs.theme));
     $$('#setting-view .settings-btn').forEach(b => b.classList.toggle('active', b.dataset.val === prefs.viewMode));
     $$('#setting-sidebar .settings-btn').forEach(b => b.classList.toggle('active', b.dataset.val === String(prefs.showRightSidebar)));
-    $$('#setting-keywords .settings-btn').forEach(b => {
-      b.classList.toggle('active', prefs.alertKeywords.includes(b.dataset.id));
-    });
+    $$('#setting-master-alert .settings-btn').forEach(b => b.classList.toggle('active', b.dataset.val === String(prefs.masterAlert)));
   }
 
   // ===== Notifications =====
@@ -873,16 +899,31 @@
   }
 
   function triggerMockNotification() {
-    setTimeout(() => addNotification('like', '❤️ 누군가 회원님의 댓글을 좋아합니다.', 1), 4000);
-    setTimeout(() => addNotification('reply', '💬 회원님의 댓글에 새로운 답글이 달렸습니다.', 2), 8000);
+    if (!prefs.masterAlert) return;
+    
+    setTimeout(() => { if (prefs.masterAlert) addNotification('like', '❤️ 누군가 회원님의 댓글을 좋아합니다.', 1); }, 4000);
+    setTimeout(() => { if (prefs.masterAlert) addNotification('reply', '💬 회원님의 댓글에 새로운 답글이 달렸습니다.', 2); }, 8000);
     setTimeout(() => {
-      if (prefs.alertKeywords && prefs.alertKeywords.length > 0) {
+      if (prefs.masterAlert && prefs.alertKeywords && prefs.alertKeywords.length > 0) {
         const targetKw = prefs.alertKeywords[0];
         const catObj = getCategoryById(targetKw);
-        const catLabel = getI18nText(catObj.label);
-        addNotification('keyword', `🔔 관심 키워드 [${catLabel}]에 새로운 뉴스가 업데이트 되었습니다.`, 31);
+        if(catObj) {
+          const catLabel = getI18nText(catObj.label);
+          addNotification('keyword', `🔔 관심 키워드 [${catLabel}]에 새로운 뉴스가 업데이트 되었습니다.`, 31);
+        }
       }
     }, 12000);
+  }
+
+  function toggleKeywordAlert(kw) {
+    if (!prefs.alertKeywords.includes(kw)) {
+      prefs.alertKeywords.push(kw);
+      showToast('이 키워드의 새로운 뉴스를 알림으로 받습니다.', 'success');
+    } else {
+      prefs.alertKeywords = prefs.alertKeywords.filter(k => k !== kw);
+      showToast('이 키워드 알림 수신이 해제되었습니다.', 'info');
+    }
+    savePrefs();
   }
 
   function readNotifications() {
@@ -973,6 +1014,6 @@
   }
 
   // ===== Public API =====
-  window.app = { showDetail, notiClick, toggleBookmark, submitComment, showAuthModal, hideAuthModal, emailLogin, showSettingsModal, readNotifications, goHome, showToast, refreshFeed, triggerFetch, toggleLang };
+  window.app = { showDetail, notiClick, toggleBookmark, submitComment, showAuthModal, hideAuthModal, emailLogin, showSettingsModal, readNotifications, goHome, goBackToFeed, toggleKeywordAlert, showToast, refreshFeed, triggerFetch, toggleLang };
   document.addEventListener('DOMContentLoaded', () => { init(); triggerMockNotification(); });
 })();
