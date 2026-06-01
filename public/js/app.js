@@ -877,6 +877,6 @@
   }
 
   // ===== Public API =====
-  window.app = { toggleBookmark, submitComment, showAuthModal, hideAuthModal, emailLogin, showSettingsModal, readNotifications, goHome, showToast, refreshFeed, triggerFetch, toggleLang };
+  window.app = { showDetail, toggleBookmark, submitComment, showAuthModal, hideAuthModal, emailLogin, showSettingsModal, readNotifications, goHome, showToast, refreshFeed, triggerFetch, toggleLang };
   document.addEventListener('DOMContentLoaded', () => { init(); triggerMockNotification(); });
 })();
