@@ -387,20 +387,24 @@
       <div class="main-inner detail-page visible">
         <button class="detail-back" onclick="app.goHome()">← 피드로 돌아가기</button>
         <div class="detail-meta-row">
-          <span class="badge badge-cat" data-cat="${post.category_l1}">${cat.emoji} ${cat.label}</span>
+          <span class="badge badge-cat" data-cat="${post.category_l1}">${cat.emoji} ${getI18nText(cat.label)}</span>
           <span class="badge badge-status ${post.status_badge === 'Paid' ? 'paid' : ''}">${post.status_badge}</span>
-          <span class="badge badge-tech ${(post.tech_status||'').toLowerCase()}">${post.tech_status}</span>
+          <span class="badge badge-tech ${(post.tech_status||'').toLowerCase()}">${post.tech_status||'Stable'}</span>
           <span style="margin-left:auto;font-size:12px;color:var(--text-tertiary)">${relativeTime(post.created_at)} · 👁 ${fmtViews(post.views||0)}</span>
         </div>
 
-        <h1 class="detail-title">${post.title}</h1>
+        <h1 class="detail-title">${getI18nText(post.title)}</h1>
 
         <div class="detail-program-bar">
           <div class="detail-program-icon" style="background:${logo.bg};color:${logo.color};font-size:16px;font-weight:800">${logo.icon}</div>
           <div>
-            <div class="detail-program-name">${post.program_l2}</div>
-            <div class="detail-program-company">${post.company_l3}</div>
+            <div class="detail-program-name">${post.program_l2 || 'AI Tool'}</div>
+            <div class="detail-program-company">${post.company_l3 || post.company || ''}</div>
           </div>
+          ${post.url ? `
+          <a href="${post.url}" target="_blank" rel="noopener noreferrer" style="margin-left: 12px; padding: 6px 12px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; color: var(--accent-blue); background: var(--accent-blue-bg); text-decoration: none;">
+            원문 출처 ↗
+          </a>` : ''}
           <button class="card-bookmark ${bk ? 'active' : ''}" style="opacity:1;position:static;margin-left:auto;font-size:20px" onclick="app.toggleBookmark(${post.id})">
             ${bk ? '🔖' : '🏷️'}
           </button>
@@ -409,14 +413,14 @@
         ${post.summary_3lines ? `
         <div class="summary-box">
           <div class="summary-box-label">📋 핵심 3줄 요약</div>
-          ${post.summary_3lines.map((l, i) => `
+          ${(Array.isArray(getI18nText(post.summary_3lines)) ? getI18nText(post.summary_3lines) : [getI18nText(post.summary_3lines)]).map((l, i) => `
             <div class="summary-item">
               <div class="summary-num">${i + 1}</div>
               <div class="summary-text">${l}</div>
             </div>`).join('')}
         </div>` : ''}
 
-        <div class="detail-body">${renderMD(post.content_body || '')}</div>
+        <div class="detail-body">${renderMD(getI18nText(post.content_body || post.summary || ''))}</div>
 
         <div class="timetalk">
           <div class="timetalk-header">
@@ -515,7 +519,7 @@
               const cat = getCategoryById(p.category_l1);
               const titleText = getI18nText(p.title);
               return `
-                <div class="trending-item" data-id="${p.id}" style="display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--bg-tertiary); cursor: pointer;">
+                <div class="trending-item" onclick="app.showDetail(${p.id})" style="display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--bg-tertiary); cursor: pointer;">
                   <span class="trending-rank" style="font-size: 15px; font-weight: 800; color: ${i < 3 ? 'var(--accent-red)' : 'var(--text-tertiary)'}; width: 16px; text-align: center;">${i + 1}</span>
                   <div class="trending-info" style="flex: 1;">
                     <div class="trending-title" style="font-size: 13px; font-weight: 500; line-height: 1.4; color: var(--text-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 4px;">${titleText}</div>
@@ -554,10 +558,6 @@
 
       </div>
     `;
-
-    sb.querySelectorAll('.trending-item').forEach(item => {
-      item.addEventListener('click', () => showDetail(parseInt(item.dataset.id)));
-    });
   }
 
   function initResizableSidebar() {
