@@ -134,10 +134,9 @@ const INITIAL_POSTS = [
   },
   {
     id: 10,
-    title: "Meta, 궁극의 오픈소스 모델 'Llama 3' 8B 및 70B 모델 공개",
     title: { en: "Meta releases Llama 3, the ultimate open-source model", ko: "Meta, 궁극의 오픈소스 모델 'Llama 3' 8B 및 70B 모델 공개" },
     summary: { en: "Meta's Llama 3 sets a new standard for open-source AI.", ko: "메타가 오픈소스 AI 생태계를 이끌어갈 Llama 3 시리즈를 전격 공개했습니다. 8B 모델조차 기존 모델들을 압도합니다." },
-    content_body: { en: "## The open-source counter-attack\n\n**Meta** has released **Llama 3** (8B, 70B) for free, trained on 15T tokens.", ko: "## 오픈소스의 대반격\n\n**Meta**가 Llama 시리즈의 최신작인 **Llama 3** (8B, 70B) 버전을 무료로 공개했습니다. 무려 15T(조) 토큰의 방대한 데이터셋으로 학습된 이 모델들은 추론, 수학, 코딩 등 모든 지표에서 동급 최고의 성능을 보여줍니다.\n\nMark Zuckerberg는 향후 400B 이상의 거대한 멀티모달 버전을 학습 중이라고 밝혔으며, 이는 OpenAI의 GPT-4를 오픈소스로 따라잡겠다는 강력한 의지로 풀이됩니다.",
+    content_body: { en: "## The open-source counter-attack\n\n**Meta** has released **Llama 3** (8B, 70B) for free, trained on 15T tokens.", ko: "## 오픈소스의 대반격\n\n**Meta**가 Llama 시리즈의 최신작인 **Llama 3** (8B, 70B) 버전을 무료로 공개했습니다. 무려 15T(조) 토큰의 방대한 데이터셋으로 학습된 이 모델들은 추론, 수학, 코딩 등 모든 지표에서 동급 최고의 성능을 보여줍니다.\n\nMark Zuckerberg는 향후 400B 이상의 거대한 멀티모달 버전을 학습 중이라고 밝혔으며, 이는 OpenAI의 GPT-4를 오픈소스로 따라잡겠다는 강력한 의지로 풀이됩니다." },
     program_l2: "Llama 3",
     category_l1: "llm",
     company: "Meta",
