@@ -502,8 +502,6 @@
     const trending = [...state.posts].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 6);
 
     sb.innerHTML = `
-      <div class="resize-handle" id="resize-handle"></div>
-      
       <!-- Unified Right Sidebar Container -->
       <div class="right-sidebar-inner" style="display: flex; flex-direction: column; height: 100%;">
         
@@ -562,43 +560,8 @@
     });
   }
 
-  // ===== Resizable Right Sidebar =====
   function initResizableSidebar() {
-    const handle = $('#resize-handle');
-    const sidebar = $('#right-sidebar');
-    let isResizing = false;
-    let startX, startWidth;
-
-    handle.addEventListener('mousedown', (e) => {
-      isResizing = true;
-      startX = e.clientX;
-      startWidth = sidebar.offsetWidth;
-      handle.classList.add('active');
-      document.body.style.cursor = 'col-resize';
-      document.body.style.userSelect = 'none';
-      e.preventDefault();
-    });
-
-    document.addEventListener('mousemove', (e) => {
-      if (!isResizing) return;
-      const diff = startX - e.clientX;
-      const newWidth = Math.min(
-        parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sidebar-right-max')),
-        Math.max(
-          parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sidebar-right-min')),
-          startWidth + diff
-        )
-      );
-      sidebar.style.width = newWidth + 'px';
-    });
-
-    document.addEventListener('mouseup', () => {
-      if (!isResizing) return;
-      isResizing = false;
-      handle.classList.remove('active');
-      document.body.style.cursor = '';
-      document.body.style.userSelect = '';
-    });
+    // Resize functionality removed as per user request to maintain traditional static layout
   }
 
   // ===== Bookmark =====
