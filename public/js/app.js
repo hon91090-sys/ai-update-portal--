@@ -30,7 +30,12 @@
     state.lang = state.lang === 'en' ? 'ko' : 'en';
     if (typeof translateDOM === 'function') translateDOM();
     renderSidebar();
-    renderFeed();
+    if (state.currentView === 'detail') {
+      showDetail(state.currentPostId);
+    } else {
+      renderFeed();
+    }
+    renderRightSidebar();
   }
 
   const $ = (s) => document.querySelector(s);
@@ -346,7 +351,9 @@
             </div>
           </div>
           <button class="card-bookmark ${bk ? 'active' : ''}" onclick="event.stopPropagation();app.toggleBookmark(${p.id})" title="${bk ? '북마크 해제' : '북마크'}">
-            ${bk ? '🔖' : '🏷️'}
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="${bk ? '#FBBF24' : 'none'}" stroke="${bk ? '#FBBF24' : 'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+            </svg>
           </button>
         </article>`;
     }).join('');
@@ -405,8 +412,10 @@
           <a href="${post.url}" target="_blank" rel="noopener noreferrer" style="margin-left: 12px; padding: 6px 12px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; color: var(--accent-blue); background: var(--accent-blue-bg); text-decoration: none;">
             원문 출처 ↗
           </a>` : ''}
-          <button class="card-bookmark ${bk ? 'active' : ''}" style="opacity:1;position:static;margin-left:auto;font-size:20px" onclick="app.toggleBookmark(${post.id})">
-            ${bk ? '🔖' : '🏷️'}
+          <button class="card-bookmark ${bk ? 'active' : ''}" style="opacity:1;position:static;margin-left:auto;font-size:20px" onclick="app.toggleBookmark(${post.id})" title="${bk ? '북마크 해제' : '북마크'}">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="${bk ? '#FBBF24' : 'none'}" stroke="${bk ? '#FBBF24' : 'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+            </svg>
           </button>
         </div>
 
