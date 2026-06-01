@@ -1,0 +1,14 @@
+{
+  "name": "ai-portal-crawler",
+  "version": "1.0.0",
+  "description": "Automated AI news crawler for Supabase Realtime",
+  "main": "crawler.js",
+  "scripts": {
+    "start": "node crawler.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "rss-parser": "^3.13.0",
+    "dotenv": "^16.3.1"
+  }
+}

@@ -138,17 +138,57 @@
     }
   }
 
+  // ===== Security (XSS Prevention) =====
+  function escapeHTML(str) {
+    if (typeof str !== 'string') return str;
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  // ===== Supabase Setup =====
+  const SUPABASE_URL = 'https://cyazhttnbeejcoeaoocg.supabase.co'; // TODO: Paste your Supabase Project URL here
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5YXpodHRuYmVlamNvZWFvb2NnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzMjk3NTcsImV4cCI6MjA5NTkwNTc1N30.aLPSPqKfvFHX6zPrT9WxDbE6XCepKFUbWt5CKJOzzTg'; // TODO: Paste your Supabase Anon Key here
+  let supabase = null;
+
+  if (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+
   // ===== Data Loading =====
   async function loadPosts() {
-    try {
-      const res = await fetch('/api/posts');
-      if (res.ok) {
-        const apiPosts = await res.json();
-        state.posts = (apiPosts && apiPosts.length > 0) ? apiPosts : (INITIAL_POSTS || []);
-        return;
+    if (supabase) {
+      try {
+        const { data, error } = await supabase.from('posts').select('*').order('created_at', { ascending: false });
+        if (!error && data && data.length > 0) {
+          state.posts = data;
+        } else {
+          state.posts = INITIAL_POSTS || [];
+        }
+      } catch(e) {
+        state.posts = INITIAL_POSTS || [];
       }
-    } catch (e) {}
-    state.posts = INITIAL_POSTS || [];
+
+      // Realtime Subscription (실시간 자동 갱신!)
+      supabase.channel('public:posts')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, payload => {
+          const newPost = payload.new;
+          state.posts.unshift(newPost); // 최상단에 삽입
+          if (prefs.masterAlert) {
+            const title = newPost.title.ko || newPost.title.en;
+            addNotification('keyword', `🚨 [실시간 속보] 새로운 뉴스가 등록되었습니다: ${title}`, newPost.id);
+          }
+          renderFeed(); // 피드 리렌더링
+          renderRightSidebar();
+        })
+        .subscribe();
+    } else {
+      // Fallback for Mock UI when no keys are provided
+      state.posts = INITIAL_POSTS || [];
+    }
   }
 
   async function refreshFeed() {
@@ -395,6 +435,10 @@
     if (!post) return;
 
     post.views = (post.views || 0) + 1; // Increment app-internal views
+    if (supabase) {
+      // 🔒 SECURITY: Call Server-side RPC to safely increment views (prevents client spoofing)
+      supabase.rpc('increment_view_count', { p_id: postId }).catch(console.error);
+    }
 
     state.currentView = 'detail';
     state.currentPostId = postId;
