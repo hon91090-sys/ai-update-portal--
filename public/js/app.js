@@ -904,17 +904,17 @@
     
     const list = $('#noti-list');
     if (state.notifications.length === 0) {
-      list.innerHTML = \`<div style="padding:40px 20px; text-align:center; color:var(--text-tertiary); font-size:13px;">새로운 알림이 없습니다.</div>\`;
+      list.innerHTML = `<div style="padding:40px 20px; text-align:center; color:var(--text-tertiary); font-size:13px;">새로운 알림이 없습니다.</div>`;
     } else {
-      list.innerHTML = state.notifications.map(n => \`
-        <div class="noti-item \${n.read ? 'read' : ''}" onclick="app.notiClick(\${n.postId})" style="padding:16px; border-bottom:1px solid var(--border); cursor:pointer; display:flex; gap:12px; align-items:flex-start; background: \${n.read ? 'transparent' : 'var(--bg-secondary)'}; transition: background 0.2s;">
-          <div style="font-size:18px; margin-top:2px;">\${n.type === 'like' ? '❤️' : n.type === 'reply' ? '💬' : '🔔'}</div>
+      list.innerHTML = state.notifications.map(n => `
+        <div class="noti-item ${n.read ? 'read' : ''}" onclick="app.notiClick(${n.postId})" style="padding:16px; border-bottom:1px solid var(--border); cursor:pointer; display:flex; gap:12px; align-items:flex-start; background: ${n.read ? 'transparent' : 'var(--bg-secondary)'}; transition: background 0.2s;">
+          <div style="font-size:18px; margin-top:2px;">${n.type === 'like' ? '❤️' : n.type === 'reply' ? '💬' : '🔔'}</div>
           <div style="flex:1;">
-            <div style="font-size:13px; color:var(--text-primary); line-height:1.4; margin-bottom:4px;">\${n.message}</div>
-            <div style="font-size:11px; color:var(--text-tertiary);">\${n.time}</div>
+            <div style="font-size:13px; color:var(--text-primary); line-height:1.4; margin-bottom:4px;">${n.message}</div>
+            <div style="font-size:11px; color:var(--text-tertiary);">${n.time}</div>
           </div>
         </div>
-      \`).join('');
+      `).join('');
     }
 
     state.notifications.forEach(n => n.read = true);
