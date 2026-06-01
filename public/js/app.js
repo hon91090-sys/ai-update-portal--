@@ -505,51 +505,56 @@
     sb.innerHTML = `
       <div class="resize-handle" id="resize-handle"></div>
       
-      <!-- Trending Section -->
-      <div class="right-section" style="margin-bottom: 32px;">
-        <div class="right-section-header" style="margin-bottom: 16px; border-bottom: 2px solid var(--text-primary); padding-bottom: 8px;">
-          <h3 class="right-section-title" style="font-size: 15px; font-weight: 800; color: var(--text-primary);">🔥 ${getI18nText({ko: '많이 본 뉴스', en: 'Trending News'})}</h3>
-        </div>
-        <div class="trending-list" style="display: flex; flex-direction: column;">
-          ${trending.map((p, i) => {
-            const cat = getCategoryById(p.category_l1);
-            const titleText = getI18nText(p.title);
-            return `
-              <div class="trending-item" data-id="${p.id}" style="display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); cursor: pointer;">
-                <span class="trending-rank" style="font-size: 16px; font-weight: 800; color: ${i < 3 ? 'var(--accent-red)' : 'var(--text-tertiary)'}; width: 16px; text-align: center;">${i + 1}</span>
-                <div class="trending-info" style="flex: 1;">
-                  <div class="trending-title" style="font-size: 13px; font-weight: 500; line-height: 1.4; color: var(--text-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 6px;">${titleText}</div>
-                  <div class="trending-meta" style="font-size: 11px; color: var(--text-tertiary);">
-                    <span style="color: ${cat.color}; font-weight: 600;">${p.program_l2 || 'AI'}</span> · 👁 ${fmtViews(p.views||0)}
-                  </div>
-                </div>
-              </div>`;
-          }).join('')}
-        </div>
-      </div>
-
-      <!-- Advertisement Section -->
-      <div class="right-section" style="margin-bottom: 32px;">
-        <div class="right-section-header" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-end;">
-          <h3 class="right-section-title" style="font-size: 13px; font-weight: 700; color: var(--text-secondary);">스폰서 콘텐츠</h3>
-          <span style="font-size: 10px; color: var(--text-tertiary);">AD</span>
-        </div>
-        <a href="#" target="_blank" style="display: block; width: 100%; height: 250px; background: url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=400&q=80') center/cover; border-radius: 0; position: relative; text-decoration: none;">
-          <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); padding: 20px 16px 16px; color: white;">
-            <strong style="display: block; font-size: 16px; font-weight: 700; margin-bottom: 6px;">최고의 AI 코딩 경험</strong>
-            <span style="font-size: 12px; opacity: 0.9;">지금 30일 무료로 체험하기</span>
+      <!-- Unified Right Sidebar Container -->
+      <div class="right-sidebar-inner" style="display: flex; flex-direction: column; height: 100%;">
+        
+        <!-- Trending Section -->
+        <div class="right-section" style="padding-bottom: 24px; border-bottom: 1px solid var(--border);">
+          <div class="right-section-header" style="margin-bottom: 16px;">
+            <h3 class="right-section-title" style="font-size: 15px; font-weight: 800; color: var(--text-primary);">🔥 ${getI18nText({ko: '많이 본 뉴스', en: 'Trending News'})}</h3>
           </div>
-        </a>
-      </div>
+          <div class="trending-list" style="display: flex; flex-direction: column;">
+            ${trending.map((p, i) => {
+              const cat = getCategoryById(p.category_l1);
+              const titleText = getI18nText(p.title);
+              return `
+                <div class="trending-item" data-id="${p.id}" style="display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--bg-tertiary); cursor: pointer;">
+                  <span class="trending-rank" style="font-size: 15px; font-weight: 800; color: ${i < 3 ? 'var(--accent-red)' : 'var(--text-tertiary)'}; width: 16px; text-align: center;">${i + 1}</span>
+                  <div class="trending-info" style="flex: 1;">
+                    <div class="trending-title" style="font-size: 13px; font-weight: 500; line-height: 1.4; color: var(--text-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 4px;">${titleText}</div>
+                    <div class="trending-meta" style="font-size: 11px; color: var(--text-tertiary);">
+                      <span style="color: ${cat.color}; font-weight: 600;">${p.program_l2 || 'AI'}</span> · 👁 ${fmtViews(p.views||0)}
+                    </div>
+                  </div>
+                </div>`;
+            }).join('')}
+          </div>
+        </div>
 
-      <!-- AI Insight Section -->
-      <div class="right-section" style="margin-bottom: 32px;">
-        <div class="right-section-header" style="margin-bottom: 16px; border-bottom: 2px solid var(--text-primary); padding-bottom: 8px;">
-          <h3 class="right-section-title" style="font-size: 15px; font-weight: 800; color: var(--text-primary);">✨ AI Insight</h3>
+        <!-- Advertisement Section -->
+        <div class="right-section" style="padding: 24px 0; border-bottom: 1px solid var(--border);">
+          <div class="right-section-header" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: flex-end;">
+            <h3 class="right-section-title" style="font-size: 13px; font-weight: 700; color: var(--text-secondary);">스폰서 콘텐츠</h3>
+            <span style="font-size: 10px; color: var(--text-tertiary);">AD</span>
+          </div>
+          <a href="#" target="_blank" style="display: block; width: 100%; padding-top: 60%; background: url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=400&q=80') center/cover; border-radius: var(--radius-sm); position: relative; text-decoration: none; overflow: hidden;">
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); padding: 16px 12px 12px; color: white;">
+              <strong style="display: block; font-size: 14px; font-weight: 700; margin-bottom: 4px;">최고의 AI 코딩 경험</strong>
+              <span style="font-size: 11px; opacity: 0.9;">지금 30일 무료로 체험하기</span>
+            </div>
+          </a>
         </div>
-        <div class="insight-text" style="font-size: 13px; line-height: 1.6; color: var(--text-primary);">
-          이번 주 가장 주목할 트렌드는 <strong>자율 AI 에이전트</strong>의 부상입니다. 사용자의 개입 없이 코드를 스스로 작성, 테스트, 배포하는 에이전트들의 성숙도가 급격히 올라가고 있습니다.
+
+        <!-- AI Insight Section -->
+        <div class="right-section" style="padding-top: 24px;">
+          <div class="right-section-header" style="margin-bottom: 12px;">
+            <h3 class="right-section-title" style="font-size: 14px; font-weight: 800; color: var(--text-primary);">✨ AI Insight</h3>
+          </div>
+          <div class="insight-text" style="font-size: 13px; line-height: 1.6; color: var(--text-primary); background: var(--bg-secondary); padding: 16px; border-radius: var(--radius-sm);">
+            이번 주 가장 주목할 트렌드는 <strong>자율 AI 에이전트</strong>의 부상입니다. 사용자의 개입 없이 코드를 스스로 작성, 테스트, 배포하는 에이전트들의 성숙도가 급격히 올라가고 있습니다.
+          </div>
         </div>
+
       </div>
     `;
 

@@ -111,8 +111,7 @@ body {
   background: var(--bg-secondary);
   color: var(--text-primary);
   line-height: 1.6;
-  overflow: hidden;
-  height: 100vh;
+  min-height: 100vh;
   transition: background-color var(--transition-base), color var(--transition-base);
 }
 a { color: inherit; text-decoration: none; }
@@ -309,8 +308,9 @@ input, textarea { font-family: inherit; border: none; outline: none; }
 /* ---------- App Body (below header) ---------- */
 .app-body {
   display: flex;
-  height: calc(100vh - var(--header-height));
+  min-height: calc(100vh - var(--header-height));
   margin-top: var(--header-height);
+  align-items: flex-start;
 }
 
 /* ---------- Left Sidebar ---------- */
@@ -319,7 +319,9 @@ input, textarea { font-family: inherit; border: none; outline: none; }
   min-width: var(--sidebar-left-width);
   background: var(--bg-primary);
   border-right: 1px solid var(--bg-tertiary);
-  height: 100%;
+  position: sticky;
+  top: var(--header-height);
+  height: calc(100vh - var(--header-height));
   overflow-y: auto;
   padding: 16px 0;
   flex-shrink: 0;
@@ -382,8 +384,6 @@ input, textarea { font-family: inherit; border: none; outline: none; }
 .main-content {
   flex: 1;
   min-width: 0;
-  height: 100%;
-  overflow-y: auto;
   background: var(--bg-secondary);
 }
 
@@ -685,8 +685,6 @@ input, textarea { font-family: inherit; border: none; outline: none; }
   max-width: var(--sidebar-right-max);
   background: var(--bg-primary);
   border-left: 1px solid var(--bg-tertiary);
-  height: 100%;
-  overflow-y: auto;
   padding: 20px;
   flex-shrink: 0;
   position: relative;
