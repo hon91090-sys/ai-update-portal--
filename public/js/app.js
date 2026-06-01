@@ -20,6 +20,23 @@
     lang: 'en'
   };
 
+  // ===== Helpers =====
+  const STATUS_I18N = {
+    'Free': { en: '🟢 Free', ko: '🟢 무료' },
+    'Freemium': { en: '🟢 Freemium', ko: '🟢 부분무료' },
+    'Paid': { en: '🟡 Paid', ko: '🟡 유료' },
+    'Beta': { en: '🔮 Beta', ko: '🔮 베타' },
+    'Stable': { en: '✅ Stable', ko: '✅ 정식' },
+    'Alpha': { en: '🔴 Alpha', ko: '🔴 알파' }
+  };
+  function getStatusText(text) {
+    if (!text) return '';
+    for (const [key, val] of Object.entries(STATUS_I18N)) {
+      if (text.includes(key)) return val[state.lang];
+    }
+    return text;
+  }
+
   // Safe i18n text extractor for bilingual JSON fields
   function getI18nText(field) {
     if (!field) return '';
