@@ -502,7 +502,6 @@
     const trending = [...state.posts].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 6);
 
     sb.innerHTML = `
-    sb.innerHTML = `
       <div class="resize-handle" id="resize-handle"></div>
       
       <!-- Unified Right Sidebar Container -->
