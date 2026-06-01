@@ -1,29 +1,28 @@
-﻿// ============================================
-// AI Update Portal v2.5 ??Data Layer
+// ============================================
+// AI Update Portal v2.5 — Data Layer
 // Company logos + Categories + Mock data
 // ============================================
 
 const CATEGORIES = [
-  { id: 'all', emoji: '?룧', label: { en: 'All Feeds', ko: '?꾩껜 ?쇰뱶' }, color: '#1A73E8' },
-  { id: 'llm', emoji: '?랃툘', label: { en: 'LLM & Text', ko: 'LLM & ?띿뒪?? }, color: '#1A73E8' },
-  { id: 'image', emoji: '?렓', label: { en: 'Image Gen', ko: '?대?吏 ?앹꽦' }, color: '#E8457C' },
-  { id: 'video', emoji: '?렗', label: { en: 'Video & Motion', ko: '?곸긽 & 紐⑥뀡' }, color: '#7C3AED' },
-  { id: 'code', emoji: '?뮲', label: { en: 'Coding AI', ko: '肄붾뵫 蹂댁“' }, color: '#0891B2' },
-  { id: 'audio', emoji: '?렦', label: { en: 'Audio & Voice', ko: '?ㅻ뵒??& ?뚯꽦' }, color: '#EA8600' },
-  { id: 'data', emoji: '?뱤', label: { en: 'Data Analysis', ko: '?곗씠??遺꾩꽍' }, color: '#0D9E6F' },
-  { id: 'multi', emoji: '?쨼', label: { en: 'Multimodal', ko: '硫?곕え??& AI' }, color: '#D93025' },
-  { id: 'hardware', emoji: '?숋툘', label: { en: 'Hardware & Chips', ko: '?섎뱶?⑥뼱 & 移? }, color: '#5C5C5C' },
-  { id: 'startup', emoji: '??', label: { en: 'Startups', ko: '?ㅽ??몄뾽 & ?ъ옄' }, color: '#F59E0B' },
-  { id: 'policy', emoji: '?뽳툘', label: { en: 'Ethics & Policy', ko: '?ㅻ━ & 踰뺤젣?? }, color: '#4B5563' },
+  { id: 'all', emoji: '🏠', label: { en: 'All Feeds', ko: '전체 피드' }, color: '#1A73E8' },
+  { id: 'llm', emoji: '✍️', label: { en: 'LLM & Text', ko: 'LLM & 텍스트' }, color: '#1A73E8' },
+  { id: 'image', emoji: '🎨', label: { en: 'Image Gen', ko: '이미지 생성' }, color: '#E8457C' },
+  { id: 'video', emoji: '🎬', label: { en: 'Video & Motion', ko: '영상 & 모션' }, color: '#7C3AED' },
+  { id: 'code', emoji: '💻', label: { en: 'Coding AI', ko: '코딩 보조' }, color: '#0891B2' },
+  { id: 'audio', emoji: '🎵', label: { en: 'Audio & Voice', ko: '오디오 & 음성' }, color: '#EA8600' },
+  { id: 'data', emoji: '📊', label: { en: 'Data Analysis', ko: '데이터 분석' }, color: '#0D9E6F' },
+  { id: 'multi', emoji: '🤖', label: { en: 'Multimodal', ko: '멀티모델 & AI' }, color: '#D93025' },
+  { id: 'hardware', emoji: '⚙️', label: { en: 'Hardware & Chips', ko: '하드웨어 & 칩' }, color: '#5C5C5C' },
+  { id: 'startup', emoji: '🚀', label: { en: 'Startups', ko: '스타트업 & 투자' }, color: '#F59E0B' },
+  { id: 'policy', emoji: '⚖️', label: { en: 'Ethics & Policy', ko: '윤리 & 법제도' }, color: '#4B5563' },
 ];
 
-// Company logos (using favicon/brand colors)
 const COMPANY_LOGOS = {
-  'OpenAI': { icon: '??, color: '#000000', bg: '#F7F7F7' },
+  'OpenAI': { icon: '◯', color: '#000000', bg: '#F7F7F7' },
   'Anthropic': { icon: 'A', color: '#C96442', bg: '#FFF5F0' },
   'Google': { icon: 'G', color: '#4285F4', bg: '#E8F0FE' },
-  'Microsoft': { icon: '??, color: '#00A4EF', bg: '#E5F5FD' },
-  'Meta': { icon: '??, color: '#0064E0', bg: '#E5F0FF' },
+  'Microsoft': { icon: '⊞', color: '#00A4EF', bg: '#E5F5FD' },
+  'Meta': { icon: '∞', color: '#0064E0', bg: '#E5F0FF' },
   'Midjourney Inc': { icon: 'M', color: '#000000', bg: '#F0F0F0' },
   'Stability AI': { icon: 'S', color: '#7C3AED', bg: '#F3EEFF' },
   'Adobe': { icon: 'Ai', color: '#FF0000', bg: '#FFEBEB' },
@@ -32,11 +31,11 @@ const COMPANY_LOGOS = {
   'Pika Labs': { icon: 'P', color: '#FF6B35', bg: '#FFF0EA' },
   'Kuaishou': { icon: 'K', color: '#FF4906', bg: '#FFEDE5' },
   'HeyGen': { icon: 'H', color: '#6366F1', bg: '#EEEEFF' },
-  'Anysphere': { icon: '??, color: '#000000', bg: '#F0F0F0' },
+  'Anysphere': { icon: '◈', color: '#000000', bg: '#F0F0F0' },
   'Cognition': { icon: 'D', color: '#10B981', bg: '#E6F7F0' },
-  'Vercel': { icon: '??, color: '#000000', bg: '#F0F0F0' },
-  'Replit': { icon: '??, color: '#F26207', bg: '#FFF0E5' },
-  'Suno': { icon: '??, color: '#000000', bg: '#F0F0F0' },
+  'Vercel': { icon: '▲', color: '#000000', bg: '#F0F0F0' },
+  'Replit': { icon: '⟁', color: '#F26207', bg: '#FFF0E5' },
+  'Suno': { icon: '♪', color: '#000000', bg: '#F0F0F0' },
   'Udio': { icon: 'U', color: '#7C3AED', bg: '#F3EEFF' },
   'ElevenLabs': { icon: 'XI', color: '#000000', bg: '#F0F0F0' },
   'Julius': { icon: 'J', color: '#4F46E5', bg: '#EEEEFF' },
@@ -45,14 +44,15 @@ const COMPANY_LOGOS = {
   'Akkio': { icon: 'A', color: '#2563EB', bg: '#E8F0FE' },
   'Significant Gravitas': { icon: 'AG', color: '#000000', bg: '#F0F0F0' },
   'CrewAI': { icon: 'C', color: '#E8457C', bg: '#FFF0F5' },
-  'LangChain Inc': { icon: '?쬅', color: '#1C3C3C', bg: '#E8F0E8' },
+  'LangChain Inc': { icon: '🦜', color: '#1C3C3C', bg: '#E8F0E8' },
   'Perplexity AI': { icon: 'P', color: '#20808D', bg: '#E0F5F5' },
   'Notion Labs': { icon: 'N', color: '#000000', bg: '#F0F0F0' },
   'NVIDIA': { icon: 'N', color: '#76B900', bg: '#EBF4E5' },
   'AMD': { icon: 'A', color: '#ED1C24', bg: '#FCE8E9' },
   'xAI': { icon: 'X', color: '#000000', bg: '#F0F0F0' },
   'Mistral AI': { icon: 'M', color: '#EA580C', bg: '#FDEEE6' },
-  'EU': { icon: '?눎?눣', color: '#003399', bg: '#E6EBf5' },
+  'EU': { icon: '🇪🇺', color: '#003399', bg: '#E6EBf5' },
+  'Apple': { icon: '', color: '#000000', bg: '#F0F0F0' }
 };
 
 function getCompanyLogo(company) {
@@ -63,18 +63,17 @@ function getCategoryById(id) {
   return CATEGORIES.find(c => c.id === id) || CATEGORIES[0];
 }
 
-// Time helpers
 function relativeTime(dateStr) {
   const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
-  if (diff < 60) return '諛⑷툑 ??;
-  if (diff < 3600) return `${Math.floor(diff / 60)}遺???;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}?쒓컙 ??;
-  if (diff < 604800) return `${Math.floor(diff / 86400)}????;
+  if (diff < 60) return '방금 전';
+  if (diff < 3600) return `${Math.floor(diff / 60)}분 전`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}시간 전`;
+  if (diff < 604800) return `${Math.floor(diff / 86400)}일 전`;
   return new Date(dateStr).toLocaleDateString('ko-KR');
 }
 
 function fmtViews(n) {
-  if (n >= 10000) return (n / 10000).toFixed(1) + '留?;
+  if (n >= 10000) return (n / 10000).toFixed(1) + '만';
   if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
   return n.toString();
 }
@@ -82,9 +81,9 @@ function fmtViews(n) {
 const INITIAL_POSTS = [
   {
     id: 1,
-    title: { en: "OpenAI announces GPT-4o with real-time voice, vision", ko: "OpenAI, ?ㅼ떆媛??뚯꽦/鍮꾩쟾 吏?먰븯??GPT-4o ?꾧꺽 怨듦컻" },
-    summary: { en: "A unified model across text, vision, and audio natively.", ko: "?띿뒪?? 鍮꾩쟾, ?ㅻ뵒?ㅻ? ?ㅼ씠?곕툕濡?泥섎━?섎뒗 ?덈줈???뚮옒洹몄떗 紐⑤뜽 GPT-4o媛 怨듦컻?섏뿀?듬땲??" },
-    content_body: { en: "## A new era of interaction\n\nOpenAI introduced **GPT-4o**, capable of reasoning across audio, vision, and text in real time.\n\nUnlike previous models where audio was transcribed to text and then processed, GPT-4o understands the raw audio waveform, allowing it to pick up on tone, background noise, and multiple speakers seamlessly. It boasts a response time of just 232 milliseconds, mimicking human conversational speed.\n\n### Key Improvements\n- Native multimodal understanding (no intermediate transcription)\n- Dramatic speed improvements for real-time voice chat\n- Enhanced visual reasoning for reading charts, graphs, and live camera feeds\n- Cost reduced by 50% compared to GPT-4 Turbo via API\n\nThis marks a significant milestone in HCI (Human-Computer Interaction), pushing us closer to truly ubiquitous AI assistants.", ko: "## ?멸컙怨?AI ?곹샇?묒슜???덈줈???⑤윭?ㅼ엫\n\nOpenAI媛 ?ㅼ떆媛꾩쑝濡??ㅻ뵒?? ?쒓컖, ?띿뒪?몃? 異붾줎?????덈뒗 ?덈줈???뚮옒洹몄떗 紐⑤뜽??**GPT-4o**瑜?諛쒗몴?덉뒿?덈떎.\n\n怨쇨굅 ?뚯꽦???띿뒪?몃줈 蹂?섑븯??泥섎━?섎뜕 諛⑹떇怨??щ━, GPT-4o???ㅻ뵒???뚰삎 ?먯껜瑜??ㅼ씠?곕툕濡??댄빐?⑸땲?? ?대? ?듯빐 ?멸컙??媛먯젙, ?댁“, 諛곌꼍 ?뚯쓬, ?ㅼ쨷 ?붿옄源뚯? ?꾨꼍?섍쾶 ?뚯븙?섎ŉ, ?됯퇏 232ms?쇰뒗 ??쇱슫 諛섏쓳 ?띾룄濡??ㅼ젣 ?щ엺怨???뷀븯????븳 吏???녿뒗 ?명꽣?숈뀡???쒓났?⑸땲??\n\n### 二쇱슂 ?낅뜲?댄듃 ?ы빆\n- ?띿뒪??鍮꾩쟾/?ㅻ뵒???ㅼ씠?곕툕 硫?곕え??泥섎━\n- ?ㅼ떆媛??뚯꽦 踰덉뿭 諛?媛먯젙 ?몄떇 湲곕뒫 ?묒옱\n- 湲곗〈 GPT-4 Turbo ?鍮?API ?ъ슜 鍮꾩슜 50% ?덇컧 諛??띾룄 2諛??μ긽\n- ?섑븰, 肄붾뵫 ??蹂듭옟??異붾줎 吏?쒖뿉??理쒓퀬??寃쎌떊\n\n?대쾲 諛쒗몴濡??명빐 AI???⑥닚??梨쀫큸???섏뼱 ?멸컙???뚮???'?ㅼ떆媛?議곕젰??濡?吏꾪솕?섍퀬 ?덉쓬??利앸챸?덉뒿?덈떎." },
+    title: { en: "OpenAI announces GPT-4o with real-time voice, vision", ko: "OpenAI, 실시간 음성/비전 지원하는 GPT-4o 전격 공개" },
+    summary: { en: "A unified model across text, vision, and audio natively.", ko: "텍스트, 비전, 오디오를 네이티브로 처리하는 새로운 플래그십 모델 GPT-4o가 공개되었습니다." },
+    content_body: { en: "## A new era of interaction\n\nOpenAI introduced **GPT-4o**, capable of reasoning across audio, vision, and text in real time.\n\nUnlike previous models where audio was transcribed to text and then processed, GPT-4o understands the raw audio waveform, allowing it to pick up on tone, background noise, and multiple speakers seamlessly. It boasts a response time of just 232 milliseconds, mimicking human conversational speed.\n\n### Key Improvements\n- Native multimodal understanding (no intermediate transcription)\n- Dramatic speed improvements for real-time voice chat\n- Enhanced visual reasoning for reading charts, graphs, and live camera feeds\n- Cost reduced by 50% compared to GPT-4 Turbo via API\n\nThis marks a significant milestone in HCI (Human-Computer Interaction), pushing us closer to truly ubiquitous AI assistants.", ko: "## 인간과 AI 상호작용의 새로운 패러다임\n\nOpenAI가 실시간으로 오디오, 시각, 텍스트를 추론할 수 있는 새로운 플래그십 모델인 **GPT-4o**를 발표했습니다.\n\n과거 음성을 텍스트로 변환하여 처리하던 방식과 달리, GPT-4o는 오디오 파형 자체를 네이티브로 이해합니다. 이를 통해 인간의 감정, 어조, 배경 소음, 다중 화자까지 완벽하게 파악하며, 평균 232ms라는 놀라운 반응 속도로 실제 사람과 대화하는 듯한 지연 없는 인터랙션을 제공합니다.\n\n### 주요 업데이트 사항\n- 텍스트/비전/오디오 네이티브 멀티모달 처리\n- 실시간 음성 번역 및 감정 인식 기능 탑재\n- 기존 GPT-4 Turbo 대비 API 사용 비용 50% 절감 및 속도 2배 향상\n- 수학, 코딩 등 복잡한 추론 지표에서 최고점 경신\n\n이번 발표로 인해 AI는 단순한 챗봇을 넘어 인간의 훌륭한 '실시간 조력자'로 진화하고 있음을 증명했습니다." },
     program_l2: "ChatGPT (GPT-4o)",
     category_l1: "multi",
     company: "OpenAI",
@@ -95,9 +94,9 @@ const INITIAL_POSTS = [
   },
   {
     id: 2,
-    title: { en: "Anthropic launches Claude 3.5 Sonnet", ko: "Anthropic, ???湲??깅뒫??Claude 3.5 Sonnet 異쒖떆" },
-    summary: { en: "Claude 3.5 Sonnet outperforms GPT-4o in many benchmarks.", ko: "?遺遺꾩쓽 踰ㅼ튂留덊겕?먯꽌 GPT-4o瑜??κ??섎ŉ, ?ㅼ떆媛?UI ?뚮뜑留?湲곕뒫??'Artifacts'瑜??묒옱??Claude 3.5 Sonnet??異쒖떆?섏뿀?듬땲??" },
-    content_body: { en: "## Raising the bar\n\nAnthropic has released **Claude 3.5 Sonnet**, setting new industry benchmarks.\n\nOperating at twice the speed of its predecessor (Claude 3 Opus) while costing a fraction of the price, Claude 3.5 Sonnet dominates major leaderboards in coding, logic, and visual reasoning.\n\n### The 'Artifacts' Feature\nA massive UX breakthrough accompanied this release: **Artifacts**. Claude now opens a dedicated side-panel where it can generate, render, and modify code snippets, SVG graphics, and interactive React components in real time. \n\nThis fundamentally shifts Claude from a conversational AI to a collaborative workspace, reshaping how developers and designers prototype ideas.", ko: "## 踰ㅼ튂留덊겕???덈줈??湲곗?\n\nAnthropic??湲곗〈 3.0 Opus 紐⑤뜽???뺣룄?섎뒗 ?깅뒫??**Claude 3.5 Sonnet**??異쒖떆?덉뒿?덈떎.\n\n寃쎌웳?ъ씤 GPT-4o瑜???숈썝 ?섏???異붾줎(GPQA), ?숇? ?섏???吏??MMLU), 肄붾뵫(HumanEval) ????ㅼ닔 吏?쒖뿉???곗뼱?섏뿀?쇰ŉ, ?묐룞 ?띾룄 ??떆 湲곗〈 理쒖긽??紐⑤뜽 ?鍮?2諛??댁긽 鍮⑤씪議뚯뒿?덈떎.\n\n### ?곷챸?곸씤 'Artifacts' UI\n?⑥닚??紐⑤뜽 ?낅뜲?댄듃瑜??섏뼱, ?붾㈃ ?곗륫??肄붾뵫 寃곌낵臾?React, SVG, HTML)???ㅼ떆媛꾩쑝濡??뚮뜑留곹븯怨?議곗옉?????덈뒗 **Artifacts** 湲곕뒫??異붽??섏뿀?듬땲?? ?댁젣 ?ъ슜?먮뒗 ??뷀삎 AI瑜??섏뼱, AI? ?④퍡 ?ㅼ떆媛꾩쑝濡?寃곌낵臾쇱쓣 李쎌옉?섎뒗 '?묒뾽 ?뚰겕?ㅽ럹?댁뒪'瑜?寃쏀뿕?????덉뒿?덈떎. ?대뒗 媛쒕컻?먯? 湲고쉷?먯쓽 ?꾨줈?좏??댄븨 諛⑹떇???곴뎄?곸쑝濡?蹂?붿떆??寃껋엯?덈떎." },
+    title: { en: "Anthropic launches Claude 3.5 Sonnet", ko: "Anthropic, 역대급 성능의 Claude 3.5 Sonnet 출시" },
+    summary: { en: "Claude 3.5 Sonnet outperforms GPT-4o in many benchmarks.", ko: "대부분의 벤치마크에서 GPT-4o를 능가하며, 실시간 UI 렌더링 기능인 'Artifacts'를 탑재한 Claude 3.5 Sonnet이 출시되었습니다." },
+    content_body: { en: "## Raising the bar\n\nAnthropic has released **Claude 3.5 Sonnet**, setting new industry benchmarks.\n\nOperating at twice the speed of its predecessor (Claude 3 Opus) while costing a fraction of the price, Claude 3.5 Sonnet dominates major leaderboards in coding, logic, and visual reasoning.\n\n### The 'Artifacts' Feature\nA massive UX breakthrough accompanied this release: **Artifacts**. Claude now opens a dedicated side-panel where it can generate, render, and modify code snippets, SVG graphics, and interactive React components in real time. \n\nThis fundamentally shifts Claude from a conversational AI to a collaborative workspace, reshaping how developers and designers prototype ideas.", ko: "## 벤치마크의 새로운 기준\n\nAnthropic이 기존 3.0 Opus 모델을 압도하는 성능의 **Claude 3.5 Sonnet**을 출시했습니다.\n\n경쟁사인 GPT-4o를 대학원 수준의 추론(GPQA), 학부 수준의 지식(MMLU), 코딩(HumanEval) 등 대다수 지표에서 뛰어넘었으며, 작동 속도 역시 기존 최상위 모델 대비 2배 이상 빨라졌습니다.\n\n### 혁명적인 'Artifacts' UI\n단순한 모델 업데이트를 넘어, 화면 우측에 코딩 결과물(React, SVG, HTML)을 실시간으로 렌더링하고 조작할 수 있는 **Artifacts** 기능이 추가되었습니다. 이제 사용자는 대화형 AI를 넘어, AI와 함께 실시간으로 결과물을 창작하는 '협업 워크스페이스'를 경험할 수 있습니다. 이는 개발자와 기획자의 프로토타이핑 방식을 영구적으로 변화시킬 것입니다." },
     program_l2: "Claude 3.5",
     category_l1: "llm",
     company: "Anthropic",
@@ -108,9 +107,9 @@ const INITIAL_POSTS = [
   },
   {
     id: 8,
-    title: "Suno v3, ??紐?珥덈쭔???ㅽ뒠?붿삤 ?꾨━???뚯븙 ?앹꽦",
-    summary: "媛?щ쭔 ?낅젰?섎㈃ 蹂댁뺄怨?諛섏＜媛 紐⑤몢 ?ы븿???꾩쟾???뺥깭???몃옒瑜?2遺?遺꾨웾?쇰줈 ?앹꽦?대궡??Suno v3媛 ?뺤떇 異쒖떆?섏뿀?듬땲??",
-    content_body: "## ?꾧뎄???묎끝媛媛 ?섎뒗 ?쒕?\n\nAI ?뚯븙 ?ㅽ??몄뾽 **Suno**媛 ?쇰뵒?ㅼ뿉???섏삤???몃옒? 援щ텇???대젮???섏???怨좏뭹吏??ㅻ뵒?ㅻ? ?앹꽦?섎뒗 v3 紐⑤뜽??異쒖떆?덉뒿?덈떎. \n\n?? K-Pop, ?대옒?? ????嫄곗쓽 紐⑤뱺 ?λⅤ瑜?吏?먰븯硫? ?ъ슜?먭? 吏곸젒 媛?щ? ?곴굅??AI?먭쾶 媛???묒꽦??留↔린硫???紐?珥?留뚯뿉 蹂댁뺄 ?몃옓???ы븿???꾩쟾???뺥깭???뚯썝??2怨≪뵫 ?앹꽦??以띾땲?? ?대뒗 ?ㅻ뵒???앹꽦 遺꾩빞??'ChatGPT 紐⑤㉫??濡??됯?諛쏄퀬 ?덉뒿?덈떎.\n\n### 湲곗닠???꾩빟\n湲곗〈 v2 紐⑤뜽??寃쎌슦 湲곌퀎?뚯씠 ?욎씠嫄곕굹 ?뚯쭏???ㅼ냼 ?⑥뼱吏???쒓퀎媛 ?덉뿀?쇰굹, ?대쾲 v3???ㅽ뒠?붿삤 ?덉퐫???꾨━?곕? ?먮옉?⑸땲?? ?꾨＼?꾪듃 ?댄빐 ?λ젰??????μ긽?섏뼱 '?댁퓼?ㅽ떛 湲고?濡??쒖옉???쇰젆?몃줈??EDM?쇰줈 ?곗???耳?댄뙘' 媛숈? 蹂듭옟???붽뎄?ы빆???꾨꼍?섍쾶 ?뚰솕?대깄?덈떎.\n\n### ??묎텒 諛??ν썑 ?꾨쭩\n?뚯븙 ?곗뾽怨꾨뒗 ??嫄곕????곷챸??湲댁옣?섍퀬 ?덉뒿?덈떎. ?꾧뎄???ㅽ룷?고뙆???섏???怨≪쓣 李띿뼱?????덇쾶 ?섎㈃?? 李쎌옉???덈뱾? ?щ씪議뚯?留??숈떆??臾대텇蹂꾪븳 ?앹꽦 ?뚯븙????묎텒 臾몄젣(AI ?숈뒿 ?곗씠??媛 ?덈줈??踰뺤쟻 ?붾몢濡??좎삤瑜닿퀬 ?덉뒿?덈떎. Suno???대윭???쇰? ?띿뿉?쒕룄 理쒓렐 1,000?????댁긽???洹쒕え ?ъ옄瑜??좎튂?섎ŉ ?쒖옣???좊룄?섍퀬 ?덉뒿?덈떎.",
+    title: "Suno v3, 단 몇 초만에 스튜디오 퀄리티 음악 생성",
+    summary: "가사만 입력하면 보컬과 반주가 모두 포함된 완전한 형태의 노래를 2분 분량으로 생성해내는 Suno v3가 정식 출시되었습니다.",
+    content_body: "## 누구나 작곡가가 되는 시대\n\nAI 음악 스타트업 **Suno**가 라디오에서 나오는 노래와 구분이 어려울 수준의 고품질 오디오를 생성하는 v3 모델을 출시했습니다. \n\n팝, K-Pop, 클래식, 랩 등 거의 모든 장르를 지원하며, 사용자가 직접 가사를 적거나 AI에게 가사 작성을 맡기면 단 몇 초 만에 보컬 트랙이 포함된 완전한 형태의 음원을 2곡씩 생성해 줍니다. 이는 오디오 생성 분야의 'ChatGPT 모먼트'로 평가받고 있습니다.\n\n### 기술적 도약\n기존 v2 모델의 경우 기계음이 섞이거나 음질이 다소 떨어지는 한계가 있었으나, 이번 v3는 스튜디오 레코딩 퀄리티를 자랑합니다. 프롬프트 이해 능력이 대폭 향상되어 '어쿠스틱 기타로 시작해 일렉트로닉 EDM으로 터지는 케이팝' 같은 복잡한 요구사항도 완벽하게 소화해냅니다.\n\n### 저작권 및 향후 전망\n음악 산업계는 이 거대한 혁명에 긴장하고 있습니다. 누구나 스포티파이 수준의 곡을 찍어낼 수 있게 되면서, 창작의 허들은 사라졌지만 동시에 무분별한 생성 음악의 저작권 문제(AI 학습 데이터)가 새로운 법적 화두로 떠오르고 있습니다. Suno는 이러한 논란 속에서도 최근 1,000억 원 이상의 대규모 투자를 유치하며 시장을 선도하고 있습니다.",
     program_l2: "Suno v3",
     category_l1: "audio",
     company: "Suno",
@@ -121,9 +120,9 @@ const INITIAL_POSTS = [
   },
   {
     id: 9,
-    title: "Cognition, ?멸퀎 理쒖큹???꾩쟾 ?먯쑉 AI ?뚰봽?몄썾???붿??덉뼱 'Devin' 怨듦컻",
-    summary: "?꾨＼?꾪듃瑜?二쇰㈃ ?ㅼ뒪濡?肄붾뵫?섍퀬, 踰꾧렇瑜?李얘퀬, 諛고룷源뚯? ?꾨즺?섎뒗 ?먯쑉??肄붾뵫 ?먯씠?꾪듃 Devin??怨듦컻?섏뼱 ?낃퀎??鍮꾩긽??愿?ъ쓣 紐⑥쑝怨??덉뒿?덈떎.",
-    content_body: "## 肄붾뵫?섎뒗 AI ?먯씠?꾪듃\n\nAI ?ㅽ??몄뾽 **Cognition**???먯쑉 AI ?뚰봽?몄썾???붿??덉뼱??**Devin**??諛쒗몴?덉뒿?덈떎.\n\nDevin? ?⑥닚??肄붾뱶 ?먮룞?꾩꽦 ?꾧뎄媛 ?꾨떃?덈떎. ?먯떊留뚯쓽 ?곕??? 肄붾뱶 ?먮뵒?? 釉뚮씪?곗?瑜?媛뽰텛怨??덉쑝硫? ?낆썙??Upwork) 媛숈? ?몄＜ ?뚮옯?쇱쓽 ?ㅼ젣 媛쒕컻 ?묒뾽??泥섏쓬遺???앷퉴吏 ?쇱옄???꾩닔?????덈뒗 ?λ젰??蹂댁뿬二쇱뿀?듬땲?? SWE-bench(?뚰봽?몄썾???붿??덉뼱留?踰ㅼ튂留덊겕)?먯꽌 湲곗〈 AI 紐⑤뜽?ㅼ쓽 ?닿껐瑜?1~4%)???꾨뱷???곗뼱?섎뒗 13.86%???⑤룆 ?닿껐瑜좎쓣 湲곕줉?덉뒿?덈떎.",
+    title: "Cognition, 세계 최초의 완전 자율 AI 소프트웨어 엔지니어 'Devin' 공개",
+    summary: "프롬프트를 주면 스스로 코딩하고, 버그를 찾고, 배포까지 완료하는 자율형 코딩 에이전트 Devin이 공개되어 업계의 비상한 관심을 모으고 있습니다.",
+    content_body: "## 코딩하는 AI 에이전트\n\nAI 스타트업 **Cognition**이 자율 AI 소프트웨어 엔지니어인 **Devin**을 발표했습니다.\n\nDevin은 단순한 코드 자동완성 도구가 아닙니다. 자신만의 터미널, 코드 에디터, 브라우저를 갖추고 있으며, 업워크(Upwork) 같은 외주 플랫폼의 실제 개발 작업을 처음부터 끝까지 혼자서 완수할 수 있는 능력을 보여주었습니다. SWE-bench(소프트웨어 엔지니어링 벤치마크)에서 기존 AI 모델들의 해결률(1~4%)을 아득히 뛰어넘는 13.86%의 단독 해결률을 기록했습니다.",
     program_l2: "Devin",
     category_l1: "code",
     company: "Cognition",
@@ -134,9 +133,9 @@ const INITIAL_POSTS = [
   },
   {
     id: 10,
-    title: { en: "Meta releases Llama 3, the ultimate open-source model", ko: "Meta, 沅곴레???ㅽ뵂?뚯뒪 紐⑤뜽 'Llama 3' 8B 諛?70B 紐⑤뜽 怨듦컻" },
-    summary: { en: "Meta's Llama 3 sets a new standard for open-source AI.", ko: "硫뷀?媛 ?ㅽ뵂?뚯뒪 AI ?앺깭怨꾨? ?대걣?닿컝 Llama 3 ?쒕━利덈? ?꾧꺽 怨듦컻?덉뒿?덈떎. 8B 紐⑤뜽議곗감 湲곗〈 紐⑤뜽?ㅼ쓣 ?뺣룄?⑸땲??" },
-    content_body: { en: "## The open-source counter-attack\n\n**Meta** has released **Llama 3** (8B, 70B) for free, trained on 15T tokens.\n\nThe 8B model rivals previous-generation flagship models, while the 70B model competes head-to-head with proprietary giants like GPT-4 and Claude 3 Sonnet. \n\n### Next Steps\nMark Zuckerberg announced that Meta is already training a massive 400B+ parameter multimodal variant of Llama 3, signaling a commitment to keep the AI ecosystem open and highly competitive. This move puts immense pressure on closed-source API providers by offering comparable intelligence at a fraction of the inference cost.", ko: "## ?ㅽ뵂?뚯뒪???諛섍꺽\n\n**Meta**媛 Llama ?쒕━利덉쓽 理쒖떊?묒씤 **Llama 3** (8B, 70B) 踰꾩쟾??臾대즺濡?怨듦컻?덉뒿?덈떎. 臾대젮 15T(議? ?좏겙??諛⑸????곗씠?곗뀑?쇰줈 ?숈뒿????紐⑤뜽?ㅼ? 異붾줎, ?섑븰, 肄붾뵫 ??紐⑤뱺 吏?쒖뿉???숆툒 理쒓퀬???깅뒫??蹂댁뿬以띾땲??\n\n?뱁엳 8B ?뚮씪誘명꽣 紐⑤뜽??寃쎌슦 媛쒖씤???명듃遺곸씠???ㅻ쭏?명룿?먯꽌??援щ룞??媛?ν븷 ?뺣룄濡?媛踰쇱슦硫댁꽌?? ?댁쟾 ?몃???嫄곕? 紐⑤뜽?ㅺ낵 留욌㉨???곗뼱???깅뒫??諛쒗쐶?섏뿬 ?⑤뵒諛붿씠??On-device) AI ?앺깭怨꾩쓽 湲고룺?쒓? ?섍퀬 ?덉뒿?덈떎.\n\n### 嫄곕? 紐⑤뜽 異쒖떆 ?덇퀬\nMark Zuckerberg???ν썑 400B(4泥쒖뼲 ?뚮씪誘명꽣) ?댁긽??嫄곕???硫?곕え??踰꾩쟾???꾩옱 ?숈뒿 以묒씠?쇨퀬 諛앺삍?쇰ŉ, ?대뒗 OpenAI??GPT-4瑜??ㅽ뵂?뚯뒪濡??꾩쟾???곕씪?↔쿋?ㅻ뒗 媛뺣젰???섏?濡???대맗?덈떎. 湲곗뾽?ㅼ? ?댁젣 媛믩퉬??API 醫낆냽?먯꽌 踰쀬뼱???먯껜?곸쑝濡?Llama 3瑜?誘몄꽭議곗젙(Fine-tuning)?섏뿬 蹂댁븞??蹂댁옣???명븯?곗뒪 AI瑜?援ъ텞?????덇쾶 ?섏뿀?듬땲??" },
+    title: { en: "Meta releases Llama 3, the ultimate open-source model", ko: "Meta, 궁극의 오픈소스 모델 'Llama 3' 8B 및 70B 모델 공개" },
+    summary: { en: "Meta's Llama 3 sets a new standard for open-source AI.", ko: "메타가 오픈소스 AI 생태계를 이끌어갈 Llama 3 시리즈를 전격 공개했습니다. 8B 모델조차 기존 모델들을 압도합니다." },
+    content_body: { en: "## The open-source counter-attack\n\n**Meta** has released **Llama 3** (8B, 70B) for free, trained on 15T tokens.\n\nThe 8B model rivals previous-generation flagship models, while the 70B model competes head-to-head with proprietary giants like GPT-4 and Claude 3 Sonnet. \n\n### Next Steps\nMark Zuckerberg announced that Meta is already training a massive 400B+ parameter multimodal variant of Llama 3, signaling a commitment to keep the AI ecosystem open and highly competitive. This move puts immense pressure on closed-source API providers by offering comparable intelligence at a fraction of the inference cost.", ko: "## 오픈소스의 대반격\n\n**Meta**가 Llama 시리즈의 최신작인 **Llama 3** (8B, 70B) 버전을 무료로 공개했습니다. 무려 15T(조) 토큰의 방대한 데이터셋으로 학습된 이 모델들은 추론, 수학, 코딩 등 모든 지표에서 동급 최고의 성능을 보여줍니다.\n\n특히 8B 파라미터 모델의 경우 개인용 노트북이나 스마트폰에서도 구동이 가능할 정도로 가벼우면서도, 이전 세대의 거대 모델들과 맞먹는 뛰어난 성능을 발휘하여 온디바이스(On-device) AI 생태계의 기폭제가 되고 있습니다.\n\n### 거대 모델 출시 예고\nMark Zuckerberg는 향후 400B(4천억 파라미터) 이상의 거대한 멀티모델 버전을 현재 학습 중이라고 밝혔으며, 이는 OpenAI의 GPT-4를 오픈소스로 완전히 따라잡겠다는 강력한 의지로 풀이됩니다. 기업들은 이제 값비싼 API 종속에서 벗어나 자체적으로 Llama 3를 미세조정(Fine-tuning)하여 보안이 보장된 인하우스 AI를 구축할 수 있게 되었습니다." },
     program_l2: "Llama 3",
     category_l1: "llm",
     company: "Meta",
@@ -147,9 +146,9 @@ const INITIAL_POSTS = [
   },
   {
     id: 3,
-    title: { en: "OpenAI announces Sora, text-to-video AI model", ko: "OpenAI, ?띿뒪?몃줈 鍮꾨뵒?ㅻ? 留뚮뱶??'Sora' ?꾧꺽 諛쒗몴" },
-    summary: { en: "Sora generates high-quality videos up to 1 minute from text.", ko: "理쒕? 1遺?湲몄씠??怨좏뭹吏?鍮꾨뵒?ㅻ? ?띿뒪???꾨＼?꾪듃留뚯쑝濡??꾨꼍?섍쾶 ?앹꽦???대뒗 AI 紐⑤뜽 Sora媛 怨듦컻?섏뼱 ???멸퀎 ?곸긽 ?곗뾽??異⑷꺽??二쇨퀬 ?덉뒿?덈떎." },
-    content_body: { en: "## Blurring the lines of reality\n\nOpenAI has unveiled **Sora**, an AI model that transforms text commands into high-resolution, realistic videos.", ko: "## ?꾩떎怨?CG??寃쎄퀎媛 臾대꼫吏??n\nOpenAI媛 ?띿뒪??紐낅졊?대? 怨좏빐?곷룄???꾩떎?곸씤 鍮꾨뵒?ㅻ줈 蹂?섑븯??AI 紐⑤뜽??**Sora**瑜?怨듦컻?덉뒿?덈떎." },
+    title: { en: "OpenAI announces Sora, text-to-video AI model", ko: "OpenAI, 텍스트로 비디오를 만드는 'Sora' 전격 발표" },
+    summary: { en: "Sora generates high-quality videos up to 1 minute from text.", ko: "최대 1분 길이의 고품질 비디오를 텍스트 프롬프트만으로 완벽하게 생성해 내는 AI 모델 Sora가 공개되어 전 세계 영상 산업에 충격을 주고 있습니다." },
+    content_body: { en: "## Blurring the lines of reality\n\nOpenAI has unveiled **Sora**, an AI model that transforms text commands into high-resolution, realistic videos.", ko: "## 현실과 CG의 경계가 무너지다\n\nOpenAI가 텍스트 명령어를 고해상도의 현실적인 비디오로 변환하는 AI 모델인 **Sora**를 공개했습니다." },
     program_l2: "Sora",
     category_l1: "video",
     company: "OpenAI",
@@ -160,9 +159,9 @@ const INITIAL_POSTS = [
   },
   {
     id: 4,
-    title: { en: "Google launches Gemma 2 open models", ko: "Google, ?뺣룄??媛?깅퉬???뚰삎 ?ㅽ뵂 紐⑤뜽 'Gemma 2' 怨듦컻" },
-    summary: { en: "Google released Gemma 2 based on Gemini technology.", ko: "援ш???Gemini??湲곗닠?μ쓣 諛뷀깢?쇰줈 ???ㅽ뵂 紐⑤뜽 Gemma 2瑜?異쒖떆?덉뒿?덈떎. 27B 紐⑤뜽??Llama 3 70B? 留욌㉨???깅뒫??蹂댁뿬以띾땲??" },
-    content_body: { en: "## A new standard for open weights\n\nGoogle has launched **Gemma 2**, available in 9B and 27B sizes.", ko: "## ?뚰삎 紐⑤뜽???諛섎?\n\n援ш???9B? 27B ??媛吏 ?ъ씠利덈줈 援ъ꽦??李⑥꽭? ?ㅽ뵂 紐⑤뜽 **Gemma 2**瑜?怨듦컻?덉뒿?덈떎." },
+    title: { en: "Google launches Gemma 2 open models", ko: "Google, 압도적 가성비의 소형 오픈 모델 'Gemma 2' 공개" },
+    summary: { en: "Google released Gemma 2 based on Gemini technology.", ko: "구글이 Gemini의 기술력을 바탕으로 한 오픈 모델 Gemma 2를 출시했습니다. 27B 모델이 Llama 3 70B와 맞먹는 성능을 보여줍니다." },
+    content_body: { en: "## A new standard for open weights\n\nGoogle has launched **Gemma 2**, available in 9B and 27B sizes.", ko: "## 소형 모델의 대반란\n\n구글이 9B와 27B 두 가지 사이즈로 구성된 차세대 오픈 모델 **Gemma 2**를 공개했습니다." },
     program_l2: "Gemma 2",
     category_l1: "llm",
     company: "Google",
@@ -173,9 +172,9 @@ const INITIAL_POSTS = [
   },
   {
     id: 5,
-    title: { en: "Cursor IDE introduces 'Composer' feature", ko: "Cursor IDE, ?곷챸?곸씤 'Composer' 湲곕뒫 ?낅뜲?댄듃" },
-    summary: { en: "Composer can edit multiple files simultaneously based on context.", ko: "AI 湲곕컲 肄붾뱶 ?먮뵒?곗씤 Cursor媛 ?щ윭 ?뚯씪???숈떆??遺꾩꽍?섍퀬 ?섏젙?섎뒗 Composer 湲곕뒫???낅뜲?댄듃?섏뿬 媛쒕컻???앹궛?깆쓣 洹뱁븳?쇰줈 ?뚯뼱?щ━怨??덉뒿?덈떎." },
-    content_body: { en: "## Paradigm shift in coding\n\n**Cursor** has introduced the **Composer** feature, allowing AI to edit multiple files at once.", ko: "## 肄붾뵫 諛⑹떇??洹쇰낯??蹂??n\n理쒓퀬??AI 肄붾뱶 ?먮뵒?곕줈 ?먮━?↔퀬 ?덈뒗 **Cursor**媛 理쒖떊 ?낅뜲?댄듃瑜??듯빐 **Composer** 湲곕뒫???좊낫??듬땲??" },
+    title: { en: "Cursor IDE introduces 'Composer' feature", ko: "Cursor IDE, 혁명적인 'Composer' 기능 업데이트" },
+    summary: { en: "Composer can edit multiple files simultaneously based on context.", ko: "AI 기반 코드 에디터인 Cursor가 여러 파일을 동시에 분석하고 수정하는 Composer 기능을 업데이트하여 개발자 생산성을 극한으로 끌어올리고 있습니다." },
+    content_body: { en: "## Paradigm shift in coding\n\n**Cursor** has introduced the **Composer** feature, allowing AI to edit multiple files at once.", ko: "## 코딩 방식의 근본적 변화\n\n최고의 AI 코드 에디터로 자리잡고 있는 **Cursor**가 최신 업데이트를 통해 **Composer** 기능을 선보였습니다." },
     program_l2: "Cursor",
     category_l1: "code",
     company: "Anysphere",
@@ -183,8 +182,7 @@ const INITIAL_POSTS = [
     created_at: new Date(Date.now() - 15000000).toISOString(),
     views: 0,
     is_important: true
-  }
-  ,
+  },
   {
     id: 11,
     title: { en: "ChatGPT unveiled by OpenAI, sparking global AI race", ko: "OpenAI, 전 세계를 뒤흔든 'ChatGPT' 최초 공개" },
@@ -288,8 +286,7 @@ const INITIAL_POSTS = [
     created_at: new Date("2024-03-13T00:00:00Z").toISOString(),
     views: 45000,
     is_important: true
-  }
-  ,
+  },
   {
     id: 19,
     title: { en: "Anthropic introduces Claude 2, a safer AI", ko: "Anthropic, 한층 똑똑하고 안전해진 'Claude 2' 런칭" },
@@ -331,9 +328,9 @@ const INITIAL_POSTS = [
   },
   {
     id: 22,
-    title: { en: "NVIDIA breaches  Trillion market cap", ko: "엔비디아(NVIDIA), AI 랠리 타고 시가총액 2조 달러 돌파" },
+    title: { en: "NVIDIA breaches 2 Trillion market cap", ko: "엔비디아(NVIDIA), AI 랠리 타고 시가총액 2조 달러 돌파" },
     summary: { en: "AI chip demand propels NVIDIA into the elite trillion-dollar club.", ko: "AI 반도체 수요 폭발로 엔비디아의 주가가 급등하며, 애플과 마이크로소프트에 이어 세계에서 세 번째로 시총 2조 달러를 돌파했습니다." },
-    content_body: { en: "## The undisputed AI powerhouse\n\nFueled by insatiable demand for its AI accelerators, **NVIDIA**'s market capitalization has officially crossed the  Trillion mark.\n\nThe unprecedented surge is driven by companies racing to buy H100 chips for training generative AI models. CEO Jensen Huang stated that 'accelerated computing and generative AI have hit the tipping point.' This milestone cements NVIDIA's status as the most critical infrastructure provider of the 21st century.", ko: "## AI 시대의 새로운 제왕\n\n생성형 AI 시대의 핵심 인프라인 칩(GPU)을 독점하다시피 하고 있는 **NVIDIA(엔비디아)**의 시가총액이 단숨에 2조 달러(약 2,600조 원)를 돌파하는 기염을 토했습니다.\n\nGPT-4, Gemini 등 초거대 AI 모델을 학습시키기 위해 전 세계 테크 기업들이 엔비디아의 H100 칩을 입도선매하려 혈안이 되어 있으며, 이는 유례없는 실적 어닝 서프라이즈로 이어졌습니다. 젠슨 황 CEO는 '가속 컴퓨팅과 생성형 AI가 임계점(Tipping point)에 도달했다'고 선언했으며, 엔비디아는 실리콘밸리에서 가장 영향력 있는 기업으로 우뚝 섰습니다." },
+    content_body: { en: "## The undisputed AI powerhouse\n\nFueled by insatiable demand for its AI accelerators, **NVIDIA**'s market capitalization has officially crossed the 2 Trillion mark.\n\nThe unprecedented surge is driven by companies racing to buy H100 chips for training generative AI models. CEO Jensen Huang stated that 'accelerated computing and generative AI have hit the tipping point.' This milestone cements NVIDIA's status as the most critical infrastructure provider of the 21st century.", ko: "## AI 시대의 새로운 제왕\n\n생성형 AI 시대의 핵심 인프라인 칩(GPU)을 독점하다시피 하고 있는 **NVIDIA(엔비디아)**의 시가총액이 단숨에 2조 달러(약 2,600조 원)를 돌파하는 기염을 토했습니다.\n\nGPT-4, Gemini 등 초거대 AI 모델을 학습시키기 위해 전 세계 테크 기업들이 엔비디아의 H100 칩을 입도선매하려 혈안이 되어 있으며, 이는 유례없는 실적 어닝 서프라이즈로 이어졌습니다. 젠슨 황 CEO는 '가속 컴퓨팅과 생성형 AI가 임계점(Tipping point)에 도달했다'고 선언했으며, 엔비디아는 실리콘밸리에서 가장 영향력 있는 기업으로 우뚝 섰습니다." },
     program_l2: "Corporate",
     category_l1: "hardware",
     company: "NVIDIA",
@@ -346,7 +343,7 @@ const INITIAL_POSTS = [
     id: 23,
     title: { en: "Pika Labs releases Pika 1.0 for AI video generation", ko: "Pika Labs, AI 영상 생성기 'Pika 1.0' 공개 및 대규모 투자 유치" },
     summary: { en: "A powerful text-to-video AI capable of modifying existing videos and expanding canvases.", ko: "단순 텍스트 입력만으로 3D 애니메이션, 실사 영화 수준의 동영상을 생성하고 일부분만 수정할 수 있는 Pika 1.0이 런칭되었습니다." },
-    content_body: { en: "## Anyone can be a director\n\nAI video startup **Pika Labs** emerged from stealth mode with the launch of **Pika 1.0** and a  funding round.\n\nThe platform allows users to create cinematic videos, 3D animations, and anime styles simply by typing text. Its standout feature is video-to-video editing—users can alter specific elements within a video, like changing a character's clothing, or expand the aspect ratio of existing footage using outpainting. Pika is fast becoming a major competitor to Runway in the AI video space.", ko: "## 누구나 영화감독이 될 수 있다\n\nAI 영상 생성 스타트업인 **Pika Labs(피카 랩스)**가 5,500만 달러의 대규모 투자 유치 소식과 함께, 자사의 새로운 모델인 **Pika 1.0**을 웹 기반 플랫폼으로 공개했습니다.\n\n피카 1.0은 텍스트 프롬프트를 통해 고품질의 3D 애니메이션, 실사 비디오, 카툰 스타일의 영상을 매끄럽게 생성합니다. 특히 기존 영상의 일부 영역만 드래그하여 옷을 갈아입히거나 배경을 바꾸는 인페인팅(Inpainting), 영상의 화면 비율을 자연스럽게 넓히는 아웃페인팅(Outpainting) 기능을 지원하여 영상 편집 크리에이터들에게 폭발적인 반응을 얻고 있습니다." },
+    content_body: { en: "## Anyone can be a director\n\nAI video startup **Pika Labs** emerged from stealth mode with the launch of **Pika 1.0** and a 55M funding round.\n\nThe platform allows users to create cinematic videos, 3D animations, and anime styles simply by typing text. Its standout feature is video-to-video editing—users can alter specific elements within a video, like changing a character's clothing, or expand the aspect ratio of existing footage using outpainting. Pika is fast becoming a major competitor to Runway in the AI video space.", ko: "## 누구나 영화감독이 될 수 있다\n\nAI 영상 생성 스타트업인 **Pika Labs(피카 랩스)**가 5,500만 달러의 대규모 투자 유치 소식과 함께, 자사의 새로운 모델인 **Pika 1.0**을 웹 기반 플랫폼으로 공개했습니다.\n\n피카 1.0은 텍스트 프롬프트를 통해 고품질의 3D 애니메이션, 실사 비디오, 카툰 스타일의 영상을 매끄럽게 생성합니다. 특히 기존 영상의 일부 영역만 드래그하여 옷을 갈아입히거나 배경을 바꾸는 인페인팅(Inpainting), 영상의 화면 비율을 자연스럽게 넓히는 아웃페인팅(Outpainting) 기능을 지원하여 영상 편집 크리에이터들에게 폭발적인 반응을 얻고 있습니다." },
     program_l2: "Pika 1.0",
     category_l1: "video",
     company: "Pika Labs",
@@ -371,10 +368,8 @@ const INITIAL_POSTS = [
 ];
 
 const MOCK_COMMENTS = [
-  { id: 1, post_id: 1, user_name: "AI?щ━?먯씠??, avatar: "?뫀", comment_text: "GPT-4o ?뚯꽦 ?몄떇 ?띾룄 吏꾩쭨 誘몄낀?듬땲?? ?쒕젅?닿? ?꾩삁 ?녿꽕??", created_at: new Date(Date.now() - 7200000).toISOString(), is_blinded: false },
-  { id: 2, post_id: 2, user_name: "?꾨줎?몄뿏?쒕끂??, avatar: "?뮲", comment_text: "Claude 3.5 Sonnet??Artifacts 湲곕뒫 ?⑤낫??媛쒕컻 ?⑤윭?ㅼ엫??諛붾?寃?媛숈뒿?덈떎. 由ъ븸??而댄룷?뚰듃瑜??ㅼ떆媛꾩쑝濡?留뚮뱾?댁＜?ㅻ땲...", created_at: new Date(Date.now() - 86400000).toISOString(), is_blinded: false },
-  { id: 3, post_id: 3, user_name: "?곸긽媛먮룆A", avatar: "?렏", comment_text: "Sora????띻릿 ?쒕뜲 ?몄젣易??쇰컲?몃뱾???⑤낵 ???덉쓣源뚯슂? 鍮⑤━ ?⑤낫怨??띕꽕??", created_at: new Date(Date.now() - 172800000).toISOString(), is_blinded: false },
-  { id: 4, post_id: 8, user_name: "諛⑷뎄?앸퉬?몃찓?댁빱", avatar: "?렒", comment_text: "Suno濡??뚯븙 留뚮뱾?대뇬?붾뜲, ?λ궃 ?꾨땲?ㅼ슂. ??묎텒 臾몄젣???대뼸寃??좎? 沅곴툑?⑸땲??", created_at: new Date(Date.now() - 259200000).toISOString(), is_blinded: false },
+  { id: 1, post_id: 1, user_name: "AI크리에이터", avatar: "👤", comment_text: "GPT-4o 음성 인식 속도 진짜 미쳤습니다. 딜레이가 아예 없네요.", created_at: new Date(Date.now() - 7200000).toISOString(), is_blinded: false },
+  { id: 2, post_id: 2, user_name: "프론트엔드노예", avatar: "💻", comment_text: "Claude 3.5 Sonnet의 Artifacts 기능 써보니 개발 패러다임이 바뀔 것 같습니다. 리액트 컴포넌트를 실시간으로 만들어주다니...", created_at: new Date(Date.now() - 86400000).toISOString(), is_blinded: false },
+  { id: 3, post_id: 3, user_name: "영상감독A", avatar: "🎥", comment_text: "Sora는 놀랍긴 한데 언제쯤 일반인들이 써볼 수 있을까요? 빨리 써보고 싶네요.", created_at: new Date(Date.now() - 172800000).toISOString(), is_blinded: false },
+  { id: 4, post_id: 8, user_name: "방구석비트메이커", avatar: "🎧", comment_text: "Suno로 음악 만들어봤는데, 장난 아니네요. 저작권 문제는 어떻게 될지 궁금합니다.", created_at: new Date(Date.now() - 259200000).toISOString(), is_blinded: false }
 ];
-
-
