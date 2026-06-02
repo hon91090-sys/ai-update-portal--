@@ -133,7 +133,10 @@
       const defaultName = currentUser.email ? currentUser.email.split('@')[0] : '유저';
       const name = escapeHTML(currentUser.user_metadata?.full_name || defaultName);
       const avatar = escapeHTML(currentUser.user_metadata?.avatar_url || '');
-      btn.innerHTML = avatar ? `<img src="${avatar}" style="width:24px;height:24px;border-radius:50%;vertical-align:middle;object-fit:cover;" onerror="this.style.display='none'" title="${name}">` : name;
+      
+      const defaultAvatarIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; background:var(--bg-tertiary); border-radius:50%; padding:3px;" title="${name}"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
+      
+      btn.innerHTML = avatar ? `<img src="${avatar}" style="width:24px;height:24px;border-radius:50%;vertical-align:middle;object-fit:cover;" onerror="this.outerHTML='${defaultAvatarIcon.replace(/'/g, "\\'")}'" title="${name}">` : defaultAvatarIcon;
       btn.onclick = () => app.showProfileModal();
     } else {
       btn.innerHTML = '로그인';
@@ -192,10 +195,10 @@
   }
 
   async function refreshFeed() {
-    showToast(getI18nText({ko: '🔄 피드를 새로고침합니다...', en: '🔄 Refreshing feed...'}), 'info');
+    showToast(getI18nText({ko: '피드를 새로고침합니다...', en: 'Refreshing feed...'}), 'info');
     await loadPosts();
     renderFeed();
-    showToast(getI18nText({ko: '✨ 피드 새로고침 완료', en: '✨ Feed refreshed'}), 'success');
+    showToast(getI18nText({ko: '피드 새로고침 완료', en: 'Feed refreshed'}), 'success');
   }
 
   // ===== Left Sidebar =====
@@ -708,7 +711,7 @@
       showToast('포켓에서 제거됨', 'info');
     } else {
       state.bookmarks.add(id);
-      showToast('포켓에 저장됨 📌', 'success');
+      showToast('포켓에 저장됨', 'success');
     }
     localStorage.setItem('aip_bookmarks', JSON.stringify([...state.bookmarks]));
     const pc = $('#pocket-count');
@@ -774,7 +777,7 @@
     input.style.height = 'auto';
     input.disabled = false;
     $('#comment-submit').disabled = true;
-    showToast('댓글 등록됨 💬', 'success');
+    showToast('댓글 등록됨', 'success');
   }
 
   // ===== Navigation =====
@@ -808,11 +811,11 @@
   }
 
   async function triggerFetch() {
-    showToast(getI18nText({ko: '🔄 정각 수집봇 동작 중... 수동 새로고침을 진행합니다.', en: '🔄 Auto-bot runs on the hour. Manual fetch initiated...'}), 'info');
+    showToast(getI18nText({ko: '정각 수집봇 동작 중... 수동 새로고침을 진행합니다.', en: 'Auto-bot runs on the hour. Manual fetch initiated...'}), 'info');
     setTimeout(async () => {
       await loadPosts();
       renderFeed();
-      showToast(getI18nText({ko: '✨ 수동 새로고침 완료', en: '✨ Manual fetch completed'}), 'success');
+      showToast(getI18nText({ko: '수동 새로고침 완료', en: 'Manual fetch completed'}), 'success');
     }, 1000);
   }
 
@@ -896,7 +899,7 @@
       if (error) {
         showToast(error.message.includes('Invalid login') ? '이메일 또는 비밀번호가 틀렸습니다.' : `로그인 오류: ${error.message}`, 'error');
       } else {
-        showToast('로그인 성공! 🎉', 'success');
+        showToast('로그인 성공!', 'success');
         hideAuthModal();
       }
     } else {
@@ -905,7 +908,7 @@
       if (error) {
         showToast(`가입 오류: ${error.message}`, 'error');
       } else {
-        showToast('가입 성공! 발송된 인증 이메일을 확인해 주세요. 📩', 'success');
+        showToast('가입 성공! 발송된 인증 이메일을 확인해 주세요.', 'success');
         hideAuthModal();
       }
     }
@@ -978,7 +981,7 @@
     } else {
       currentUser = data.user; 
       updateHeaderForUser();
-      showToast('프로필이 성공적으로 업데이트되었습니다! 🎉', 'success');
+      showToast('프로필이 성공적으로 업데이트되었습니다!', 'success');
       hideProfileModal();
     }
   }
