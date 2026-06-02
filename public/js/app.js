@@ -133,7 +133,7 @@
       const defaultName = currentUser.email ? currentUser.email.split('@')[0] : '유저';
       const name = escapeHTML(currentUser.user_metadata?.full_name || defaultName);
       const avatar = escapeHTML(currentUser.user_metadata?.avatar_url || '');
-      btn.innerHTML = avatar ? `<img src="${avatar}" style="width:20px;height:20px;border-radius:50%;vertical-align:middle;margin-right:4px" onerror="this.style.display='none'"> ${name}` : name;
+      btn.innerHTML = avatar ? `<img src="${avatar}" style="width:24px;height:24px;border-radius:50%;vertical-align:middle;object-fit:cover;" onerror="this.style.display='none'" title="${name}">` : name;
       btn.onclick = () => app.showProfileModal();
     } else {
       btn.innerHTML = '로그인';
@@ -192,10 +192,10 @@
   }
 
   async function refreshFeed() {
-    showToast('🔄 피드를 새로고침합니다...', 'info');
+    showToast(getI18nText({ko: '🔄 피드를 새로고침합니다...', en: '🔄 Refreshing feed...'}), 'info');
     await loadPosts();
     renderFeed();
-    showToast('✨ 피드 새로고침 완료', 'success');
+    showToast(getI18nText({ko: '✨ 피드 새로고침 완료', en: '✨ Feed refreshed'}), 'success');
   }
 
   // ===== Left Sidebar =====
@@ -220,7 +220,7 @@
         <span class="nav-item-count" id="pocket-count">${state.bookmarks.size}</span>
       </div>
       <div class="sidebar-divider"></div>
-      <div class="sidebar-section-title">AI 엔진</div>
+      <div class="sidebar-section-title">${getI18nText({ko: 'AI 엔진', en: 'AI Engines'})}</div>
       <div class="nav-item" onclick="app.triggerFetch()" style="cursor:pointer">
         <span class="nav-item-icon">🔄</span>
         <span class="nav-item-label">${getI18nText({ko: '뉴스 수동 수집', en: 'Fetch News'})}</span>
@@ -808,12 +808,12 @@
   }
 
   async function triggerFetch() {
-    showToast('🔄 AI 뉴스 수집은 클라우드 로봇이 매 정각에 자동으로 수행하고 있습니다.', 'info');
-    // We no longer have a local /api/news/fetch backend since crawler runs on GitHub Actions
-    setTimeout(() => {
-      showToast('✨ 수동 새로고침을 진행합니다.', 'success');
-      refreshFeed();
-    }, 1500);
+    showToast(getI18nText({ko: '🔄 정각 수집봇 동작 중... 수동 새로고침을 진행합니다.', en: '🔄 Auto-bot runs on the hour. Manual fetch initiated...'}), 'info');
+    setTimeout(async () => {
+      await loadPosts();
+      renderFeed();
+      showToast(getI18nText({ko: '✨ 수동 새로고침 완료', en: '✨ Manual fetch completed'}), 'success');
+    }, 1000);
   }
 
   // ===== Auth Modal =====

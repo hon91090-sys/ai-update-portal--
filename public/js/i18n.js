@@ -32,7 +32,11 @@ const i18nDictionary = {
     "sidebar_hide": "Hide",
     "ad_badge": "SPONSORED",
     "ad_title": "Next-Gen AI IDE",
-    "ad_desc": "Boost your productivity 2x with our 30-day free trial."
+    "ad_desc": "Boost your productivity 2x with our 30-day free trial.",
+    "ai_engines": "AI Engines",
+    "msg_refreshing": "Refreshing feed...",
+    "msg_refresh_done": "Feed refreshed",
+    "msg_manual_fetch": "Cloud bots auto-fetch on the hour. Running manual refresh now..."
   },
   ko: {
     "app_title": "AI 포털",
@@ -67,7 +71,11 @@ const i18nDictionary = {
     "sidebar_hide": "숨김",
     "ad_badge": "SPONSORED",
     "ad_title": "차세대 AI 코딩 도구",
-    "ad_desc": "지금 바로 30일 무료 체험으로 개발 생산성을 2배 높이세요."
+    "ad_desc": "지금 바로 30일 무료 체험으로 개발 생산성을 2배 높이세요.",
+    "ai_engines": "AI 엔진",
+    "msg_refreshing": "피드를 새로고침합니다...",
+    "msg_refresh_done": "피드 새로고침 완료",
+    "msg_manual_fetch": "AI 뉴스 수집은 정각에 자동 수행됩니다. 수동 새로고침을 진행합니다..."
   }
 };
 
