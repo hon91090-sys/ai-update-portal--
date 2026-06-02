@@ -110,7 +110,7 @@
 [data-theme="dark"] .stat-bar-track { background: #2D2D2D; }
 
 /* ---------- Reset ---------- */
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; word-break: keep-all; overflow-wrap: break-word; }
 html { font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 body {
   font-family: var(--font-sans);
@@ -616,6 +616,8 @@ input, textarea { font-family: inherit; border: none; outline: none; }
   -webkit-box-orient: vertical;
   overflow: hidden;
   letter-spacing: -0.02em;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .card-summary {
@@ -627,6 +629,8 @@ input, textarea { font-family: inherit; border: none; outline: none; }
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .card-bottom-row {
@@ -1037,6 +1041,8 @@ input, textarea { font-family: inherit; border: none; outline: none; }
   line-height: 1.35;
   letter-spacing: -0.025em;
   margin-bottom: 16px;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .detail-program-bar {
@@ -1117,6 +1123,8 @@ input, textarea { font-family: inherit; border: none; outline: none; }
   border: 1px solid var(--bg-tertiary);
   border-radius: var(--radius-md);
   padding: 28px 32px;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .detail-body h2 { font-size: 18px; font-weight: 700; margin: 28px 0 12px; }

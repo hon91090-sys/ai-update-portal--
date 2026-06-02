@@ -623,7 +623,7 @@
                   <span class="trending-rank" style="font-size: 15px; font-weight: 800; color: ${i < 3 ? 'var(--accent-red)' : 'var(--text-tertiary)'}; width: 16px; text-align: center;">${i + 1}</span>
                   <img src="${logo}" style="width:32px; height:32px; border-radius:8px; object-fit:contain; background:white; padding:4px; flex-shrink:0;" alt="" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/1/1a/Rocket_icon.svg'">
                   <div class="trending-info" style="flex: 1;">
-                    <div class="trending-title" style="font-size: 13.5px; font-weight: 600; line-height: 1.45; color: var(--text-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 4px; letter-spacing:-0.015em;">${titleText}</div>
+                    <div class="trending-title" style="font-size: 13.5px; font-weight: 600; line-height: 1.45; color: var(--text-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 4px; letter-spacing:-0.015em; word-break: break-word; overflow-wrap: break-word;">${titleText}</div>
                     <div class="trending-meta" style="font-size: 11.5px; color: var(--text-tertiary);">
                       <span style="color: ${cat.color}; font-weight: 600;">${p.program_l2 || 'AI'}</span> · 👁 ${fmtViews(p.views||0)}
                     </div>
