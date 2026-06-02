@@ -435,9 +435,12 @@
       try {
         const { data, error } = await supabase.from('comments').select('*').eq('post_id', postId).order('created_at', { ascending: true });
         if (!error && data) comments = data;
-      } catch (e) {}
+      } catch (e) {
+        // comments table may not exist yet — silently fallback
+        comments = (typeof MOCK_COMMENTS !== 'undefined') ? MOCK_COMMENTS.filter(c => String(c.post_id) === String(postId)) : [];
+      }
     } else {
-      comments = MOCK_COMMENTS.filter(c => c.post_id === postId);
+      comments = (typeof MOCK_COMMENTS !== 'undefined') ? MOCK_COMMENTS.filter(c => String(c.post_id) === String(postId)) : [];
     }
 
     const main = $('#main-content');
