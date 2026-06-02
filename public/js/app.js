@@ -180,17 +180,10 @@
   }
 
   async function refreshFeed() {
-    showToast('피드를 새로고침합니다...', 'info');
-    try {
-      // Trigger AI news fetch
-      const res = await fetch('/api/news/fetch', { method: 'POST' });
-      const data = await res.json();
-      if (data.success && data.count > 0) {
-        showToast(`✨ AI가 ${data.count}개의 새 기사를 생성했습니다!`, 'success');
-      }
-    } catch (e) { /* ignore */ }
+    showToast('🔄 피드를 새로고침합니다...', 'info');
     await loadPosts();
     renderFeed();
+    showToast('✨ 피드 새로고침 완료', 'success');
   }
 
   // ===== Left Sidebar =====
@@ -413,13 +406,15 @@
 
   function bindCardClicks() {
     $$('.news-card').forEach(card => {
-      card.addEventListener('click', () => showDetail(parseInt(card.dataset.id)));
+      // Supabase id(BigInt) may be strings, so avoid parseInt which might cause precision issues or NaNs.
+      card.addEventListener('click', () => showDetail(card.dataset.id));
     });
   }
 
   // ===== Detail View =====
   async function showDetail(postId) {
-    const post = state.posts.find(p => p.id === postId);
+    // String cast for safe comparison between Supabase BIGINT(String) and local Mock(Number)
+    const post = state.posts.find(p => String(p.id) === String(postId));
     if (!post) return;
 
     post.views = (post.views || 0) + 1; // Increment app-internal views
@@ -592,7 +587,7 @@
               const companyName = p.company_l3 || p.company || '';
               const logo = getCompanyLogo(companyName);
               return `
-                <div class="trending-item" onclick="app.showDetail(${p.id})" style="display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--bg-tertiary); cursor: pointer; align-items:center;">
+                <div class="trending-item" onclick="app.showDetail('${p.id}')" style="display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--bg-tertiary); cursor: pointer; align-items:center;">
                   <span class="trending-rank" style="font-size: 15px; font-weight: 800; color: ${i < 3 ? 'var(--accent-red)' : 'var(--text-tertiary)'}; width: 16px; text-align: center;">${i + 1}</span>
                   <div style="width:32px; height:32px; border-radius:8px; background:${logo.bg}; color:${logo.color}; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; flex-shrink:0;">${logo.icon}</div>
                   <div class="trending-info" style="flex: 1;">
@@ -753,22 +748,12 @@
   }
 
   async function triggerFetch() {
-    showToast('🔄 AI 뉴스 수집 시작...', 'info');
-    try {
-      const res = await fetch('/api/news/fetch', { method: 'POST' });
-      const data = await res.json();
-      if (data.success) {
-        showToast(`✅ ${data.count}개 기사 생성 완료!`, 'success');
-        await loadPosts();
-        renderFeed();
-        renderSidebar();
-        renderRightSidebar();
-      } else {
-        showToast(`❌ 오류: ${data.error}`, 'error');
-      }
-    } catch (e) {
-      showToast('서버 연결 실패', 'error');
-    }
+    showToast('🔄 AI 뉴스 수집은 클라우드 로봇이 매 정각에 자동으로 수행하고 있습니다.', 'info');
+    // We no longer have a local /api/news/fetch backend since crawler runs on GitHub Actions
+    setTimeout(() => {
+      showToast('✨ 수동 새로고침을 진행합니다.', 'success');
+      refreshFeed();
+    }, 1500);
   }
 
   // ===== Auth Modal =====
