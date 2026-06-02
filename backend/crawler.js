@@ -33,6 +33,19 @@ function determineCategory(title, content) {
   return 'startup'; // Default
 }
 
+// Helper: Free Google Translate API without requiring extra libraries
+async function translateText(text, targetLang = 'ko') {
+  if (!text) return '';
+  try {
+    const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`);
+    const json = await res.json();
+    return json[0].map(item => item[0]).join('');
+  } catch(e) {
+    console.error('Translation error:', e.message);
+    return text; // Fallback to original text on error
+  }
+}
+
 // Helper: Determine Company
 function determineCompany(title) {
   const t = title.toLowerCase();
@@ -73,15 +86,23 @@ async function scrapeFeeds() {
         const category = determineCategory(item.title, item.contentSnippet || '');
         const company = determineCompany(item.title);
         
+        // Translate text using free Google API
+        const enSummary = item.contentSnippet?.slice(0, 150) + '...';
+        const enContent = item.content || item.contentSnippet;
+        
+        const koTitle = await translateText(item.title);
+        const koSummary = await translateText(enSummary);
+        const koContent = await translateText(enContent);
+        
         const newPost = {
-          title: { en: item.title, ko: `[자동번역] ${item.title}` }, // Naive mock translation for demo
+          title: { en: item.title, ko: koTitle },
           category_l1: category,
           program_l2: company === 'Startup' ? 'AI News' : `${company} Product`,
           company: company,
           status_badge: 'Free',
           tech_status: 'Stable',
-          summary: { en: item.contentSnippet?.slice(0, 150) + '...', ko: `요약된 내용입니다.` },
-          content_body: { en: item.content || item.contentSnippet, ko: `크롤러가 긁어온 본문입니다.` },
+          summary: { en: enSummary, ko: koSummary },
+          content_body: { en: enContent, ko: koContent },
           url: item.link,
           is_important: item.title.toLowerCase().includes('announce') || item.title.toLowerCase().includes('launch'),
           views: 0

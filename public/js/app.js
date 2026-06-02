@@ -425,7 +425,10 @@
   async function showDetail(postId) {
     // String cast for safe comparison between Supabase BIGINT(String) and local Mock(Number)
     const post = state.posts.find(p => String(p.id) === String(postId));
-    if (!post) return;
+    if (!post) {
+      console.error("포스트를 찾을 수 없습니다:", postId);
+      return;
+    }
 
     post.views = (post.views || 0) + 1; // Increment app-internal views
     if (supabase) {
@@ -439,20 +442,8 @@
     const companyName = post.company_l3 || post.company || '';
     const logo = getCompanyLogo(companyName);
     const bk = state.bookmarks.has(String(post.id));
-    
-    let comments = [];
-    if (supabase) {
-      try {
-        const { data, error } = await supabase.from('comments').select('*').eq('post_id', postId).order('created_at', { ascending: true });
-        if (!error && data) comments = data;
-      } catch (e) {
-        // comments table may not exist yet — silently fallback
-        comments = (typeof MOCK_COMMENTS !== 'undefined') ? MOCK_COMMENTS.filter(c => String(c.post_id) === String(postId)) : [];
-      }
-    } else {
-      comments = (typeof MOCK_COMMENTS !== 'undefined') ? MOCK_COMMENTS.filter(c => String(c.post_id) === String(postId)) : [];
-    }
 
+    // 화면부터 즉시 전환하여 클릭 먹통(프리징) 방지
     const main = $('#main-content');
     if (main) main.scrollTop = 0;
     
@@ -500,7 +491,7 @@
         <div class="timetalk">
           <div class="timetalk-header">
             <h3 class="timetalk-title">💬 타임톡</h3>
-            <span class="timetalk-count">${comments.length}개</span>
+            <span class="timetalk-count" id="detail-comments-count">...</span>
           </div>
           <div class="comment-input-row">
             <div class="comment-input-avatar">U</div>
@@ -513,7 +504,7 @@
             </div>
           </div>
           <div class="comment-list" id="comment-list">
-            ${comments.map(c => renderCommentHTML(c)).join('')}
+            <div style="padding: 20px; text-align: center; color: var(--text-tertiary); font-size: 13px;">댓글을 불러오는 중입니다...</div>
           </div>
         </div>
       </div>
@@ -521,9 +512,34 @@
 
     const ci = $('#comment-input');
     const cs = $('#comment-submit');
-    ci.addEventListener('input', () => { cs.disabled = !ci.value.trim(); });
+    if (ci && cs) {
+      ci.addEventListener('input', () => { cs.disabled = !ci.value.trim(); });
+    }
     main.scrollTop = 0;
-    history.pushState({ postId }, '', `/posts/${postId}`);
+    history.pushState({ postId }, '', `?id=${postId}`);
+    
+    loadCommentsAsync(postId);
+  }
+
+  async function loadCommentsAsync(postId) {
+    let comments = [];
+    if (supabase) {
+      try {
+        const { data, error } = await supabase.from('comments').select('*').eq('post_id', postId).order('created_at', { ascending: true });
+        if (!error && data) comments = data;
+      } catch (e) {
+        comments = (typeof MOCK_COMMENTS !== 'undefined') ? MOCK_COMMENTS.filter(c => String(c.post_id) === String(postId)) : [];
+      }
+    } else {
+      comments = (typeof MOCK_COMMENTS !== 'undefined') ? MOCK_COMMENTS.filter(c => String(c.post_id) === String(postId)) : [];
+    }
+
+    const clist = $('#comment-list');
+    const ccount = $('#detail-comments-count');
+    if (clist) {
+      clist.innerHTML = comments.length ? comments.map(c => renderCommentHTML(c)).join('') : '<div style="padding: 20px; text-align: center; color: var(--text-tertiary); font-size: 13px;">첫 댓글을 남겨보세요!</div>';
+    }
+    if (ccount) ccount.textContent = comments.length + '개';
   }
 
   function renderCommentHTML(c) {
