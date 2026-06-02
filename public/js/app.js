@@ -421,104 +421,105 @@
     });
   }
 
-  // ===== Detail View =====
   async function showDetail(postId) {
-    // String cast for safe comparison between Supabase BIGINT(String) and local Mock(Number)
-    const post = state.posts.find(p => String(p.id) === String(postId));
-    if (!post) {
-      console.error("포스트를 찾을 수 없습니다:", postId);
-      return;
-    }
+    try {
+      const post = state.posts.find(p => String(p.id) === String(postId));
+      if (!post) {
+        alert("데이터를 찾을 수 없습니다. ID: " + postId);
+        return;
+      }
 
-    post.views = (post.views || 0) + 1; // Increment app-internal views
-    if (supabase) {
-      // 🔒 SECURITY: Call Server-side RPC to safely increment views (prevents client spoofing)
-      supabase.rpc('increment_view_count', { p_id: postId }).catch(console.error);
-    }
+      post.views = (post.views || 0) + 1;
+      if (supabase) {
+        supabase.rpc('increment_view_count', { p_id: postId }).catch(e => console.warn(e));
+      }
 
-    state.currentView = 'detail';
-    state.currentPostId = postId;
-    const cat = getCategoryById(post.category_l1);
-    const companyName = post.company_l3 || post.company || '';
-    const logo = getCompanyLogo(companyName);
-    const bk = state.bookmarks.has(String(post.id));
+      state.currentView = 'detail';
+      state.currentPostId = postId;
+      const cat = getCategoryById(post.category_l1);
+      const companyName = post.company_l3 || post.company || '';
+      const logo = getCompanyLogo(companyName);
+      const bk = state.bookmarks.has(String(post.id));
 
-    // 화면부터 즉시 전환하여 클릭 먹통(프리징) 방지
-    const main = $('#main-content');
-    if (main) main.scrollTop = 0;
-    
-    main.innerHTML = `
-      <div class="main-inner detail-page visible">
-        <button class="detail-back" onclick="app.goBackToFeed()">← 피드로 돌아가기</button>
-        <div class="detail-meta-row">
-          <span class="badge badge-cat" data-cat="${post.category_l1}">${cat.emoji} ${getI18nText(cat.label)}</span>
-          <span class="badge badge-status ${post.status_badge === 'Paid' ? 'paid' : ''}">${getStatusText(post.status_badge)}</span>
-          <span class="badge badge-tech ${(post.tech_status||'').toLowerCase()}">${getStatusText(post.tech_status||'Stable')}</span>
-          <span style="margin-left:auto;font-size:12px;color:var(--text-tertiary)">${relativeTime(post.created_at)} · 👁 ${fmtViews(post.views||0)}</span>
-        </div>
-
-        <h1 class="detail-title">${getI18nText(post.title)}</h1>
-
-        <div class="detail-program-bar">
-          <div class="detail-program-icon" style="background:${logo.bg};color:${logo.color};font-size:16px;font-weight:800">${logo.icon}</div>
-          <div>
-            <div class="detail-program-name">${post.program_l2 || 'AI Tool'}</div>
-            <div class="detail-program-company">${post.company_l3 || post.company || ''}</div>
+      const main = $('#main-content');
+      if (main) main.scrollTop = 0;
+      
+      main.innerHTML = `
+        <div class="main-inner detail-page visible">
+          <button class="detail-back" onclick="app.goBackToFeed()">← 피드로 돌아가기</button>
+          <div class="detail-meta-row">
+            <span class="badge badge-cat" data-cat="${post.category_l1}">${cat.emoji} ${getI18nText(cat.label)}</span>
+            <span class="badge badge-status ${post.status_badge === 'Paid' ? 'paid' : ''}">${getStatusText(post.status_badge)}</span>
+            <span class="badge badge-tech ${(post.tech_status||'').toLowerCase()}">${getStatusText(post.tech_status||'Stable')}</span>
+            <span style="margin-left:auto;font-size:12px;color:var(--text-tertiary)">${relativeTime(post.created_at)} · 👁 ${fmtViews(post.views||0)}</span>
           </div>
-          ${post.url ? `
-          <a href="${post.url}" target="_blank" rel="noopener noreferrer" style="margin-left: 12px; padding: 6px 12px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; color: var(--accent-blue); background: var(--accent-blue-bg); text-decoration: none;">
-            원문 출처 ↗
-          </a>` : ''}
-          <button class="card-bookmark ${bk ? 'active' : ''}" style="opacity:1;position:static;margin-left:auto;font-size:20px" onclick="app.toggleBookmark(event, '${post.id}')" title="${bk ? '북마크 해제' : '북마크'}">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="${bk ? '#FBBF24' : 'none'}" stroke="${bk ? '#FBBF24' : 'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-            </svg>
-          </button>
-        </div>
 
-        ${post.summary_3lines ? `
-        <div class="summary-box">
-          <div class="summary-box-label">📋 핵심 3줄 요약</div>
-          ${(Array.isArray(getI18nText(post.summary_3lines)) ? getI18nText(post.summary_3lines) : [getI18nText(post.summary_3lines)]).map((l, i) => `
-            <div class="summary-item">
-              <div class="summary-num">${i + 1}</div>
-              <div class="summary-text">${l}</div>
-            </div>`).join('')}
-        </div>` : ''}
+          <h1 class="detail-title">${getI18nText(post.title)}</h1>
 
-        <div class="detail-body">${renderMD(getI18nText(post.content_body || post.summary || ''))}</div>
-
-        <div class="timetalk">
-          <div class="timetalk-header">
-            <h3 class="timetalk-title">💬 타임톡</h3>
-            <span class="timetalk-count" id="detail-comments-count">...</span>
+          <div class="detail-program-bar">
+            <div class="detail-program-icon" style="background:${logo.bg};color:${logo.color};font-size:16px;font-weight:800">${logo.icon}</div>
+            <div>
+              <div class="detail-program-name">${post.program_l2 || 'AI Tool'}</div>
+              <div class="detail-program-company">${post.company_l3 || post.company || ''}</div>
+            </div>
+            ${post.url ? `
+            <a href="${post.url}" target="_blank" rel="noopener noreferrer" style="margin-left: 12px; padding: 6px 12px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; color: var(--accent-blue); background: var(--accent-blue-bg); text-decoration: none;">
+              원문 출처 ↗
+            </a>` : ''}
+            <button class="card-bookmark ${bk ? 'active' : ''}" style="opacity:1;position:static;margin-left:auto;font-size:20px" onclick="app.toggleBookmark(event, '${post.id}')" title="${bk ? '북마크 해제' : '북마크'}">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="${bk ? '#FBBF24' : 'none'}" stroke="${bk ? '#FBBF24' : 'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+              </svg>
+            </button>
           </div>
-          <div class="comment-input-row">
-            <div class="comment-input-avatar">U</div>
-            <div class="comment-input-box">
-              <textarea class="comment-textarea" id="comment-input" placeholder="의견을 공유하세요..." rows="1"
-                oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
-              <div class="comment-actions-row">
-                <button class="comment-submit" id="comment-submit" disabled onclick="app.submitComment()">등록</button>
+
+          ${post.summary_3lines ? `
+          <div class="summary-box">
+            <div class="summary-box-label">📋 핵심 3줄 요약</div>
+            ${(Array.isArray(getI18nText(post.summary_3lines)) ? getI18nText(post.summary_3lines) : [getI18nText(post.summary_3lines)]).map((l, i) => `
+              <div class="summary-item">
+                <div class="summary-num">${i + 1}</div>
+                <div class="summary-text">${l}</div>
+              </div>`).join('')}
+          </div>` : ''}
+
+          <div class="detail-body">${renderMD(getI18nText(post.content_body || post.summary || ''))}</div>
+
+          <div class="timetalk">
+            <div class="timetalk-header">
+              <h3 class="timetalk-title">💬 타임톡</h3>
+              <span class="timetalk-count" id="detail-comments-count">...</span>
+            </div>
+            <div class="comment-input-row">
+              <div class="comment-input-avatar">U</div>
+              <div class="comment-input-box">
+                <textarea class="comment-textarea" id="comment-input" placeholder="의견을 공유하세요..." rows="1"
+                  oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+                <div class="comment-actions-row">
+                  <button class="comment-submit" id="comment-submit" disabled onclick="app.submitComment()">등록</button>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="comment-list" id="comment-list">
-            <div style="padding: 20px; text-align: center; color: var(--text-tertiary); font-size: 13px;">댓글을 불러오는 중입니다...</div>
+            <div class="comment-list" id="comment-list">
+              <div style="padding: 20px; text-align: center; color: var(--text-tertiary); font-size: 13px;">댓글을 불러오는 중입니다...</div>
+            </div>
           </div>
         </div>
-      </div>
-    `;
+      `;
 
-    const ci = $('#comment-input');
-    const cs = $('#comment-submit');
-    if (ci && cs) {
-      ci.addEventListener('input', () => { cs.disabled = !ci.value.trim(); });
+      const ci = $('#comment-input');
+      const cs = $('#comment-submit');
+      if (ci && cs) {
+        ci.addEventListener('input', () => { cs.disabled = !ci.value.trim(); });
+      }
+      if (main) main.scrollTop = 0;
+      try { history.pushState({ postId }, '', `?id=${postId}`); } catch(e) {}
+      
+      loadCommentsAsync(postId);
+    } catch(err) {
+      alert("클릭 처리 중 에러 발생: " + err.message);
+      console.error(err);
     }
-    main.scrollTop = 0;
-    try { history.pushState({ postId }, '', `?id=${postId}`); } catch(e) { console.warn('History API not supported in this environment'); }
-    
-    loadCommentsAsync(postId);
   }
 
   async function loadCommentsAsync(postId) {
