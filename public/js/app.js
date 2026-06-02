@@ -386,7 +386,7 @@
       const bk = state.bookmarks.has(String(p.id));
       const titleStr = getI18nText(p.title);
       const summaryStr = getI18nText(p.summary_3lines ? p.summary_3lines : p.summary);
-      const summaryHTML = Array.isArray(summaryStr) ? summaryStr.map(s => `<li>${s}</li>`).join('') : summaryStr;
+      const summaryHTML = Array.isArray(summaryStr) ? `<ul>${summaryStr.map(s => `<li>${s}</li>`).join('')}</ul>` : summaryStr;
 
       return `
         <article class="news-card" data-id="${p.id}" style="animation:cardIn .35s ease ${i * 40}ms both">
@@ -400,7 +400,7 @@
               <span class="card-time">${relativeTime(p.created_at)}</span>
             </div>
             <h3 class="card-title">${titleStr}</h3>
-            <p class="card-summary">${summaryHTML}</p>
+            <div class="card-summary">${summaryHTML}</div>
             <div class="card-bottom-row">
               <span class="badge badge-cat" data-cat="${p.category_l1}">${cat.emoji} ${getI18nText(cat.label)}</span>
               <span class="badge badge-status ${p.status_badge === 'Paid' ? 'paid' : ''}">${getStatusText(p.status_badge)}</span>
@@ -917,7 +917,7 @@
             </div>
             <div style="display:flex;flex-direction:column;gap:12px;">
               <button onclick="app.logoutUser()" style="padding:12px; background:var(--bg-tertiary); color:var(--text-primary); border-radius:6px; font-weight:bold; cursor:pointer; border:none;">로그아웃</button>
-              <button onclick="app.deleteAccount()" style="padding:12px; background:#FDEEEE; color:#D93025; border-radius:6px; font-weight:bold; cursor:pointer; border:1px solid #FAD1D1;">회원 탈퇴 (계정 삭제)</button>
+              <button onclick="app.showSettingsModal(); app.hideProfileModal();" style="padding:12px; background:transparent; color:var(--text-secondary); border-radius:6px; cursor:pointer; border:1px solid var(--border);">계정 설정 (회원 탈퇴)</button>
             </div>
           </div>
         </div>`);
@@ -1002,6 +1002,12 @@
               <button class="settings-btn" data-val="false">🔕 끄기</button>
             </div>
           </div>
+          <div class="settings-group" id="settings-account-group" style="display:none; border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px;">
+            <div class="settings-label" style="color:#D93025;">위험 영역 (Danger Zone)</div>
+            <div class="settings-options">
+              <button class="settings-btn" style="color:#D93025; border-color:#FAD1D1; background:#FDEEEE; width:100%; justify-content:center;" onclick="app.deleteAccount()">회원 탈퇴 (계정 영구 삭제)</button>
+            </div>
+          </div>
         </div>
       `);
       m = $('#settings-modal');
@@ -1047,6 +1053,11 @@
     $$('#setting-view .settings-btn').forEach(b => b.classList.toggle('active', b.dataset.val === prefs.viewMode));
     $$('#setting-sidebar .settings-btn').forEach(b => b.classList.toggle('active', b.dataset.val === String(prefs.showRightSidebar)));
     $$('#setting-master-alert .settings-btn').forEach(b => b.classList.toggle('active', b.dataset.val === String(prefs.masterAlert)));
+    
+    const accountGroup = $('#settings-account-group');
+    if (accountGroup) {
+      accountGroup.style.display = currentUser ? 'block' : 'none';
+    }
   }
 
   // ===== Notifications =====

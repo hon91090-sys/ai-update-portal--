@@ -626,11 +626,21 @@ input, textarea { font-family: inherit; border: none; outline: none; }
   line-height: 1.6;
   letter-spacing: -0.015em;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3; /* Increased slightly for list items */
   -webkit-box-orient: vertical;
   overflow: hidden;
   word-break: break-word;
   overflow-wrap: break-word;
+}
+
+.card-summary ul {
+  margin: 0;
+  padding-left: 18px; /* Push bullets inside to align with text */
+  list-style-type: disc;
+}
+
+.card-summary li {
+  margin-bottom: 2px;
 }
 
 .card-bottom-row {
