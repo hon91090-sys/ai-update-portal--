@@ -78,3 +78,7 @@ function fmtViews(n) {
 const INITIAL_POSTS = [];
 
 const MOCK_COMMENTS = [];
+
+function getCompanyLogo(company) {
+  return COMPANY_LOGOS[company] || COMPANY_LOGOS['Startup'];
+}
