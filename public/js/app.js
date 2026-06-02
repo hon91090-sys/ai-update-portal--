@@ -134,7 +134,8 @@
       const name = escapeHTML(currentUser.user_metadata?.full_name || defaultName);
       const avatar = escapeHTML(currentUser.user_metadata?.avatar_url || '');
       
-      const defaultAvatarIcon = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; background:var(--bg-tertiary); border-radius:50%; padding:3px;" title="${name}"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
+      const firstChar = name ? name.charAt(0).toUpperCase() : 'U';
+      const defaultAvatarIcon = `<div style="width:24px;height:24px;border-radius:50%;background:var(--accent-blue);color:white;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;vertical-align:middle;" title="${name}">${firstChar}</div>`;
       
       btn.innerHTML = avatar ? `<img src="${avatar}" style="width:24px;height:24px;border-radius:50%;vertical-align:middle;object-fit:cover;" onerror="this.outerHTML='${defaultAvatarIcon.replace(/'/g, "\\'")}'" title="${name}">` : defaultAvatarIcon;
       btn.onclick = () => app.showProfileModal();
@@ -1058,10 +1059,10 @@
               <button class="settings-btn" data-val="false">🔕 끄기</button>
             </div>
           </div>
-          <div class="settings-group" id="settings-account-group" style="display:none; border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px;">
-            <div class="settings-label" style="color:#D93025;">위험 영역</div>
+          <div class="settings-group" id="settings-account-group" style="display:none; border-top: 1px solid var(--border); padding-top: 20px; margin-top: 16px;">
+            <div class="settings-label" style="color:#D93025; margin-bottom: 12px; font-weight: bold; font-size: 13px;">위험 영역</div>
             <div class="settings-options">
-              <button class="settings-btn" style="color:#D93025; border-color:#FAD1D1; background:#FDEEEE; width:100%; justify-content:center; letter-spacing: -0.02em; font-weight: 700;" onclick="app.deleteAccount()">회원 탈퇴</button>
+              <button class="settings-btn" style="color:#D93025; border-color:#FAD1D1; background:#FDEEEE; width:100%; justify-content:center; letter-spacing: -0.02em; font-weight: 700; padding: 12px 0;" onclick="app.deleteAccount()">회원 탈퇴</button>
             </div>
           </div>
         </div>
