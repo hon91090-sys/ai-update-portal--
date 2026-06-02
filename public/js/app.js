@@ -516,7 +516,7 @@
       ci.addEventListener('input', () => { cs.disabled = !ci.value.trim(); });
     }
     main.scrollTop = 0;
-    history.pushState({ postId }, '', `?id=${postId}`);
+    try { history.pushState({ postId }, '', `?id=${postId}`); } catch(e) { console.warn('History API not supported in this environment'); }
     
     loadCommentsAsync(postId);
   }
@@ -771,7 +771,7 @@
 
     renderFeed();
     renderSidebar();
-    history.pushState({}, '', '/');
+    try { history.pushState({}, '', '/'); } catch(e) {}
     const main = $('#main-content');
     if (main) main.scrollTop = 0;
   }
