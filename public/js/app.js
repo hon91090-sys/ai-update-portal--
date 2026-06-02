@@ -86,17 +86,13 @@
   // ===== Supabase Setup =====
   let supabase = null;
   let currentUser = null;
+  const SUPABASE_URL = 'https://cyazhttnbeejcoeaoocg.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5YXpodHRuYmVlamNvZWFvb2NnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzMjk3NTcsImV4cCI6MjA5NTkwNTc1N30.aLPSPqKfvFHX6zPrT9WxDbE6XCepKFUbWt5CKJOzzTg';
 
   async function initSupabase() {
-    try {
-      const res = await fetch('/api/config');
-      if (res.ok) {
-        const config = await res.json();
-        if (config.SUPABASE_URL && config.SUPABASE_ANON_KEY && window.supabase) {
-          supabase = window.supabase.createClient(config.SUPABASE_URL, config.SUPABASE_ANON_KEY);
-        }
-      }
-    } catch(e) {}
+    if (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) {
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
   }
 
   // ===== Init =====
@@ -149,14 +145,6 @@
       .replace(/'/g, "&#039;");
   }
 
-  // ===== Supabase Setup =====
-  const SUPABASE_URL = 'https://cyazhttnbeejcoeaoocg.supabase.co'; // TODO: Paste your Supabase Project URL here
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5YXpodHRuYmVlamNvZWFvb2NnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzMjk3NTcsImV4cCI6MjA5NTkwNTc1N30.aLPSPqKfvFHX6zPrT9WxDbE6XCepKFUbWt5CKJOzzTg'; // TODO: Paste your Supabase Anon Key here
-  let supabase = null;
-
-  if (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  }
 
   // ===== Data Loading =====
   async function loadPosts() {
