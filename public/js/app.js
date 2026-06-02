@@ -98,6 +98,12 @@
   // ===== Init =====
   async function init() {
     applyPrefs();
+    
+    // Fix initial language glitch: translate static DOM elements before rendering
+    if (typeof translateDOM === 'function') {
+      translateDOM();
+    }
+
     await initSupabase();
     if (supabase) await checkSession();
     await loadPosts();

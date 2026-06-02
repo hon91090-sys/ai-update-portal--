@@ -15,10 +15,9 @@ if (!supabaseUrl || !supabaseKey) {
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// RSS feeds to scrape (Example: TechCrunch AI category, OpenAI Blog RSS if available, etc.)
+// RSS feeds to scrape
 const RSS_FEEDS = [
   'https://techcrunch.com/category/artificial-intelligence/feed/',
-  // You can add more AI news RSS feeds here
 ];
 
 // Helper: Basic Keyword Matching for Category assignment
@@ -31,86 +30,6 @@ function determineCategory(title, content) {
   if (t.includes('chip') || t.includes('nvidia') || t.includes('amd')) return 'hardware';
   if (t.includes('policy') || t.includes('act') || t.includes('regulation')) return 'policy';
   return 'startup'; // Default
-}
-
-// Helper: Gemini API - Rewrite News Structure
-async function rewriteNewsStructure(title, content) {
-  const GEMINI_KEY = process.env.GEMINI_API_KEY;
-  if (!GEMINI_KEY || !content) return content; // Fallback
-
-  const prompt = `
-당신은 전문 AI 뉴스 에디터입니다. 다음 영어 기사를 읽고 아래 지침에 따라 한국어로 재작성하세요.
-
-[지침]
-1. 반드시 3개의 문단으로 나눌 것.
-2. 1문단: 가장 중요한 정보 (누가, 무엇을, 언제)
-3. 2문단: 다음으로 중요한 정보 (사실, 인용문, 배경)
-4. 3문단: 사소한 정보 (전망, 여파 등)
-5. 각 문단 앞에는 '리드', '본문', '꼬리'라는 단어를 **절대** 쓰지 말고, 해당 문단의 내용을 요약하는 센스 있는 마크다운 소제목(##)을 달아주세요.
-6. 전체 내용을 한국어로 자연스럽게 작성하세요.
-
-[기사 제목]
-${title}
-
-[기사 내용]
-${content}
-`;
-
-  try {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.7 }
-      })
-    });
-    const data = await res.json();
-    if (data.candidates && data.candidates[0].content) {
-      return data.candidates[0].content.parts[0].text;
-    }
-    return content;
-  } catch (e) {
-    console.error('Gemini rewrite error:', e.message);
-    return content;
-  }
-}
-
-// Helper: Gemini API - Generate 3-line Summary
-async function generateSummary(title, content) {
-  const GEMINI_KEY = process.env.GEMINI_API_KEY;
-  if (!GEMINI_KEY || !content) return content;
-
-  const prompt = `다음 영어 기사를 읽고, 가장 핵심이 되는 내용을 한국어로 3줄 요약하세요. 각 줄은 '- '로 시작하게 작성해주세요. \n\n기사: ${title}\n${content}`;
-  
-  try {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-    });
-    const data = await res.json();
-    if (data.candidates && data.candidates[0].content) {
-      // 3줄 요약을 배열로 변환
-      const text = data.candidates[0].content.parts[0].text;
-      return text.split('\n').filter(l => l.trim().startsWith('-')).map(l => l.replace(/^- /, '').trim());
-    }
-    return ['요약을 생성할 수 없습니다.'];
-  } catch (e) {
-    return ['요약을 생성할 수 없습니다.'];
-  }
-}
-
-// Helper: Google Translate API (For short titles)
-async function translateTitle(text) {
-  if (!text) return '';
-  try {
-    const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ko&dt=t&q=${encodeURIComponent(text)}`);
-    const json = await res.json();
-    return json[0].map(item => item[0]).join('');
-  } catch(e) {
-    return text; 
-  }
 }
 
 // Helper: Determine Company
@@ -126,18 +45,60 @@ function determineCompany(title) {
   return 'Startup';
 }
 
+// Helper: Gemini API - Batch Rewrite & Translate News
+async function processBatchWithGemini(items) {
+  const GEMINI_KEY = process.env.GEMINI_API_KEY;
+  if (!GEMINI_KEY || items.length === 0) return null;
+
+  const prompt = `
+당신은 최고 수준의 다국어 AI 뉴스 에디터입니다. 아래에 제공된 ${items.length}개의 영어 기사 원문을 분석하여, 각 기사별로 번역 및 역피라미드 구조(중요한 정보 -> 배경 -> 사소한 정보)로 재작성한 뒤 **반드시 JSON 배열(Array) 형식**으로만 응답하세요. 시작이나 끝에 마크다운 코드 블록(\`\`\`json)을 쓰지 말고 순수 JSON만 반환하세요.
+
+[지침]
+각 기사마다 아래 필드를 가진 JSON 객체를 생성하세요:
+- "en_title": 원본 영어 제목
+- "ko_title": 한국어로 자연스럽게 번역된 제목
+- "en_summary": 영어로 작성된 핵심 3줄 요약 (배열 형태, 예: ["Point 1", "Point 2", "Point 3"])
+- "ko_summary": 한국어로 작성된 핵심 3줄 요약 (배열 형태)
+- "en_body": 원문을 바탕으로 역피라미드 구조로 재작성된 영문 본문. (3문단으로 나누고 각 문단 앞에 센스있는 요약 소제목 '## '을 사용할 것. 'Lead', 'Body' 등의 단어 금지)
+- "ko_body": en_body와 동일한 3문단 구조 및 소제목으로 번역/재작성된 한국어 본문.
+
+[입력 기사 목록]
+${items.map((item, i) => `--- Article ${i+1} ---\nTitle: ${item.title}\nContent: ${item.content || item.contentSnippet}\n`).join('\n')}
+`;
+
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.2 } // 낮은 온도로 JSON 포맷 유지
+      })
+    });
+    
+    const data = await res.json();
+    if (data.candidates && data.candidates[0].content) {
+      let text = data.candidates[0].content.parts[0].text;
+      text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+      return JSON.parse(text);
+    }
+  } catch (e) {
+    console.error('Gemini Batch API error:', e.message);
+  }
+  return null;
+}
+
 async function scrapeFeeds() {
-  console.log('🚀 Starting AI News Crawler...');
+  console.log('🚀 Starting AI News Batch Crawler...');
 
   for (const feedUrl of RSS_FEEDS) {
     try {
       console.log(`📡 Fetching feed: ${feedUrl}`);
       const feed = await parser.parseURL(feedUrl);
-
-      // Process top 5 recent items
+      
+      const newItems = [];
       for (const item of feed.items.slice(0, 5)) {
-        
-        // 1. Check if the post already exists in Supabase to avoid duplicates (using URL as unique identifier)
+        // 1. Check if the post already exists in Supabase
         const { data: existingPost } = await supabase
           .from('posts')
           .select('id')
@@ -146,43 +107,47 @@ async function scrapeFeeds() {
 
         if (existingPost) {
           console.log(`⏩ Skipping existing post: ${item.title}`);
-          continue;
-        }
-
-        // 2. Prepare Data Structure matching Supabase schema
-        const category = determineCategory(item.title, item.contentSnippet || '');
-        const company = determineCompany(item.title);
-        
-        // Rewrite text using Gemini API
-        const enSummary = item.contentSnippet?.slice(0, 150) + '...';
-        const enContent = item.content || item.contentSnippet;
-        
-        const koTitle = await translateTitle(item.title);
-        const koSummaryLines = await generateSummary(item.title, enContent);
-        const koContentRewritten = await rewriteNewsStructure(item.title, enContent);
-        
-        const newPost = {
-          title: { en: item.title, ko: koTitle },
-          category_l1: category,
-          program_l2: company === 'Startup' ? 'AI News' : `${company} Product`,
-          company: company,
-          status_badge: 'Free',
-          tech_status: 'Stable',
-          summary: { en: enSummary, ko: koSummaryLines.join(' ') },
-          summary_3lines: { en: [enSummary], ko: koSummaryLines },
-          content_body: { en: enContent, ko: koContentRewritten },
-          url: item.link,
-          is_important: item.title.toLowerCase().includes('announce') || item.title.toLowerCase().includes('launch'),
-          views: 0
-        };
-
-        // 3. Insert into Supabase (This will trigger Realtime broadcast to connected clients!)
-        const { data, error } = await supabase.from('posts').insert([newPost]).select();
-        
-        if (error) {
-          console.error(`❌ Error inserting post: ${item.title}`, error);
         } else {
-          console.log(`✅ Successfully inserted: ${item.title}`);
+          newItems.push(item);
+        }
+      }
+
+      if (newItems.length > 0) {
+        console.log(`🤖 Processing ${newItems.length} new items in a single Batch via Gemini...`);
+        const processedArray = await processBatchWithGemini(newItems);
+        
+        if (processedArray && Array.isArray(processedArray)) {
+          const postsToInsert = processedArray.map((aiData, i) => {
+            const originalItem = newItems[i];
+            const company = determineCompany(originalItem.title);
+            const category = determineCategory(originalItem.title, originalItem.contentSnippet || '');
+            
+            return {
+              title: { en: aiData.en_title || originalItem.title, ko: aiData.ko_title || originalItem.title },
+              category_l1: category,
+              program_l2: company === 'Startup' ? 'AI News' : `${company} Product`,
+              company: company,
+              status_badge: 'Free',
+              tech_status: 'Stable',
+              summary: { en: (aiData.en_summary || []).join(' '), ko: (aiData.ko_summary || []).join(' ') },
+              summary_3lines: { en: aiData.en_summary || [], ko: aiData.ko_summary || [] },
+              content_body: { en: aiData.en_body || originalItem.contentSnippet, ko: aiData.ko_body || originalItem.contentSnippet },
+              url: originalItem.link,
+              is_important: originalItem.title.toLowerCase().includes('announce') || originalItem.title.toLowerCase().includes('launch'),
+              views: 0
+            };
+          });
+
+          // 3. Bulk Insert into Supabase
+          const { error } = await supabase.from('posts').insert(postsToInsert);
+          
+          if (error) {
+            console.error(`❌ Error bulk inserting posts:`, error);
+          } else {
+            console.log(`✅ Successfully bulk inserted ${postsToInsert.length} posts!`);
+          }
+        } else {
+          console.error(`❌ Gemini returned invalid data format.`);
         }
       }
     } catch (err) {
