@@ -18,21 +18,21 @@ const CATEGORIES = [
 ];
 
 const COMPANY_LOGOS = {
-  "OpenAI": "https://upload.wikimedia.org/wikipedia/commons/4/4d/OpenAI_Logo.svg",
-  "Google": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg",
-  "Anthropic": "https://upload.wikimedia.org/wikipedia/commons/archive/7/78/20231018153018%21Anthropic_logo.svg",
-  "Microsoft": "https://upload.wikimedia.org/wikipedia/commons/9/96/Microsoft_logo_%282012%29.svg",
-  "Meta": "https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg",
-  "Midjourney": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Midjourney_Emblem.png",
-  "NVIDIA": "https://upload.wikimedia.org/wikipedia/commons/2/21/Nvidia_logo.svg",
-  "Perplexity": "https://mintlify.s3-us-west-1.amazonaws.com/perplexity/logo/dark.svg",
-  "Hugging Face": "https://huggingface.co/datasets/huggingface/brand-assets/resolve/main/hf-logo.svg",
-  "Stability AI": "https://upload.wikimedia.org/wikipedia/commons/4/46/Stability_AI_logo.svg",
-  "Mistral AI": "https://mistral.ai/images/logo.svg",
-  "Runway": "https://runwayml.com/assets/images/runway-logo.svg",
-  "Suno": "https://suno.com/favicon.ico",
-  "Apple": "https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg",
-  "Cognition": "https://cognition-labs.com/favicon.ico",
+  "OpenAI": "https://www.google.com/s2/favicons?domain=openai.com&sz=128",
+  "Google": "https://www.google.com/s2/favicons?domain=google.com&sz=128",
+  "Anthropic": "https://www.google.com/s2/favicons?domain=anthropic.com&sz=128",
+  "Microsoft": "https://www.google.com/s2/favicons?domain=microsoft.com&sz=128",
+  "Meta": "https://www.google.com/s2/favicons?domain=meta.com&sz=128",
+  "Midjourney": "https://www.google.com/s2/favicons?domain=midjourney.com&sz=128",
+  "NVIDIA": "https://www.google.com/s2/favicons?domain=nvidia.com&sz=128",
+  "Perplexity": "https://www.google.com/s2/favicons?domain=perplexity.ai&sz=128",
+  "Hugging Face": "https://www.google.com/s2/favicons?domain=huggingface.co&sz=128",
+  "Stability AI": "https://www.google.com/s2/favicons?domain=stability.ai&sz=128",
+  "Mistral AI": "https://www.google.com/s2/favicons?domain=mistral.ai&sz=128",
+  "Runway": "https://www.google.com/s2/favicons?domain=runwayml.com&sz=128",
+  "Suno": "https://www.google.com/s2/favicons?domain=suno.com&sz=128",
+  "Apple": "https://www.google.com/s2/favicons?domain=apple.com&sz=128",
+  "Cognition": "https://www.google.com/s2/favicons?domain=cognition-labs.com&sz=128",
   "Startup": "https://upload.wikimedia.org/wikipedia/commons/1/1a/Rocket_icon.svg"
 };
 
