@@ -147,6 +147,8 @@
 
 
   // ===== Data Loading =====
+  let _realtimeSubscribed = false; // Prevent duplicate Realtime subscriptions
+
   async function loadPosts() {
     if (supabase) {
       try {
@@ -154,28 +156,31 @@
         if (!error && data && data.length > 0) {
           state.posts = data;
         } else {
-          state.posts = INITIAL_POSTS || [];
+          state.posts = (typeof INITIAL_POSTS !== 'undefined') ? INITIAL_POSTS : [];
         }
       } catch(e) {
-        state.posts = INITIAL_POSTS || [];
+        state.posts = (typeof INITIAL_POSTS !== 'undefined') ? INITIAL_POSTS : [];
       }
 
-      // Realtime Subscription (실시간 자동 갱신!)
-      supabase.channel('public:posts')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, payload => {
-          const newPost = payload.new;
-          state.posts.unshift(newPost); // 최상단에 삽입
-          if (prefs.masterAlert) {
-            const title = newPost.title.ko || newPost.title.en;
-            addNotification('keyword', `🚨 [실시간 속보] 새로운 뉴스가 등록되었습니다: ${title}`, newPost.id);
-          }
-          renderFeed(); // 피드 리렌더링
-          renderRightSidebar();
-        })
-        .subscribe();
+      // Realtime Subscription — only subscribe ONCE
+      if (!_realtimeSubscribed) {
+        _realtimeSubscribed = true;
+        supabase.channel('public:posts')
+          .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'posts' }, payload => {
+            const newPost = payload.new;
+            state.posts.unshift(newPost);
+            if (prefs.masterAlert) {
+              const title = (newPost.title && (newPost.title.ko || newPost.title.en)) || 'New Article';
+              addNotification('keyword', `🚨 [실시간 속보] 새로운 뉴스가 등록되었습니다: ${title}`, newPost.id);
+            }
+            renderFeed();
+            renderRightSidebar();
+          })
+          .subscribe();
+      }
     } else {
       // Fallback for Mock UI when no keys are provided
-      state.posts = INITIAL_POSTS || [];
+      state.posts = (typeof INITIAL_POSTS !== 'undefined') ? INITIAL_POSTS : [];
     }
   }
 
@@ -367,7 +372,7 @@
       const cat = getCategoryById(p.category_l1);
       const companyName = p.company_l3 || p.company || '';
       const logo = getCompanyLogo(companyName);
-      const bk = state.bookmarks.has(p.id);
+      const bk = state.bookmarks.has(String(p.id));
       const titleStr = getI18nText(p.title);
       const summaryStr = getI18nText(p.summary_3lines ? p.summary_3lines : p.summary);
       const summaryHTML = Array.isArray(summaryStr) ? summaryStr.map(s => `<li>${s}</li>`).join('') : summaryStr;
@@ -395,7 +400,7 @@
               </div>
             </div>
           </div>
-          <button class="card-bookmark ${bk ? 'active' : ''}" onclick="app.toggleBookmark(event, ${p.id})" title="${bk ? '북마크 해제' : '북마크'}">
+          <button class="card-bookmark ${bk ? 'active' : ''}" onclick="app.toggleBookmark(event, '${p.id}')" title="${bk ? '북마크 해제' : '북마크'}">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="${bk ? '#FBBF24' : 'none'}" stroke="${bk ? '#FBBF24' : 'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
             </svg>
@@ -428,7 +433,7 @@
     const cat = getCategoryById(post.category_l1);
     const companyName = post.company_l3 || post.company || '';
     const logo = getCompanyLogo(companyName);
-    const bk = state.bookmarks.has(post.id);
+    const bk = state.bookmarks.has(String(post.id));
     
     let comments = [];
     if (supabase) {
@@ -468,7 +473,7 @@
           <a href="${post.url}" target="_blank" rel="noopener noreferrer" style="margin-left: 12px; padding: 6px 12px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; color: var(--accent-blue); background: var(--accent-blue-bg); text-decoration: none;">
             원문 출처 ↗
           </a>` : ''}
-          <button class="card-bookmark ${bk ? 'active' : ''}" style="opacity:1;position:static;margin-left:auto;font-size:20px" onclick="app.toggleBookmark(event, ${post.id})" title="${bk ? '북마크 해제' : '북마크'}">
+          <button class="card-bookmark ${bk ? 'active' : ''}" style="opacity:1;position:static;margin-left:auto;font-size:20px" onclick="app.toggleBookmark(event, '${post.id}')" title="${bk ? '북마크 해제' : '북마크'}">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="${bk ? '#FBBF24' : 'none'}" stroke="${bk ? '#FBBF24' : 'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
             </svg>
@@ -547,7 +552,7 @@
 
   // ===== Pocket View =====
   function renderPocketView(main) {
-    const bkPosts = state.posts.filter(p => state.bookmarks.has(p.id));
+    const bkPosts = state.posts.filter(p => state.bookmarks.has(String(p.id)));
     main.innerHTML = `
       <div class="main-inner" id="feed-area">
         <div class="feed-header">
@@ -642,8 +647,8 @@
       e.stopPropagation();
       e.preventDefault();
     }
-    if (typeof e === 'number') { id = e; e = null; }
-    if (typeof id !== 'number') return;
+    // Normalize id to string for consistent comparison (Supabase BIGINT comes as string)
+    id = String(id);
 
     const isBookmarked = state.bookmarks.has(id);
     if (isBookmarked) {
