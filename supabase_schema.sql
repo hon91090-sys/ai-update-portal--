@@ -103,3 +103,20 @@ USING (false) WITH CHECK (false);
 
 -- 실시간 업데이트(Realtime) 채널에 comments 테이블 추가
 ALTER PUBLICATION supabase_realtime ADD TABLE public.comments;
+
+-- ==========================================
+-- 🗑️ 6. SECURITY: 회원 탈퇴 기능 (RPC)
+-- ==========================================
+-- 클라이언트는 보안상 기본적으로 auth.users 테이블을 수정하거나 삭제할 수 없습니다.
+-- 따라서 서버 측 함수(SECURITY DEFINER)를 우회로로 제공하되, 오직 로그인한 본인(auth.uid())만 삭제하도록 제한합니다.
+CREATE OR REPLACE FUNCTION public.delete_user()
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  -- 현재 로그인한 사용자의 ID로 auth.users 테이블에서 해당 레코드를 삭제합니다.
+  -- Supabase에서는 auth.users 에서 지워지면 ON DELETE CASCADE 로 연결된 데이터(comments 등)도 삭제될 수 있습니다.
+  DELETE FROM auth.users WHERE id = auth.uid();
+END;
+$$;

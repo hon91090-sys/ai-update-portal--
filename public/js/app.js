@@ -133,7 +133,7 @@
       const name = currentUser.user_metadata?.full_name || currentUser.email || '유저';
       const avatar = currentUser.user_metadata?.avatar_url || '';
       btn.innerHTML = avatar ? `<img src="${avatar}" style="width:20px;height:20px;border-radius:50%;vertical-align:middle;margin-right:4px"> ${name}` : name;
-      btn.onclick = async () => { await supabase.auth.signOut(); showToast('로그아웃 되었습니다.', 'info'); };
+      btn.onclick = () => app.showProfileModal();
     } else {
       btn.innerHTML = '로그인';
       btn.onclick = () => app.showAuthModal();
@@ -659,7 +659,19 @@
             <h3 class="right-section-title" style="font-size: 14px; font-weight: 800; color: var(--text-primary);">✨ AI Insight</h3>
           </div>
           <div class="insight-text" style="font-size: 13px; line-height: 1.6; color: var(--text-primary); background: var(--bg-secondary); padding: 16px; border-radius: var(--radius-sm);">
-            이번 주 가장 주목할 트렌드는 <strong>자율 AI 에이전트</strong>의 부상입니다. 사용자의 개입 없이 코드를 스스로 작성, 테스트, 배포하는 에이전트들의 성숙도가 급격히 올라가고 있습니다.
+            ${(function(){
+              const insights = [
+                "이번 주 가장 주목할 트렌드는 <strong>자율 AI 에이전트</strong>의 부상입니다. 사용자의 개입 없이 코드를 스스로 작성, 테스트, 배포하는 에이전트들의 성숙도가 급격히 올라가고 있습니다.",
+                "거대 언어 모델(LLM)의 트렌드가 <strong>경량화 모델(sLLM)</strong>로 이동하고 있습니다. 스마트폰 등 엣지 디바이스에서 직접 돌아가는 AI 기술이 속속 발표되고 있습니다.",
+                "<strong>멀티모달 AI</strong>의 진화가 매섭습니다. 이제 텍스트뿐만 아니라 비디오, 오디오를 동시에 이해하고 생성하는 능력이 기본 탑재되고 있습니다.",
+                "AI 기술이 코딩을 넘어 <strong>데이터 분석 및 자동화</strong> 영역으로 침투하고 있습니다. 엑셀을 대체할 수 있는 AI 도구들의 출시를 눈여겨보세요.",
+                "가장 중요한 키워드는 <strong>AI 윤리와 보안</strong>입니다. 모델이 생성한 데이터의 저작권 문제와 데이터 유출 방지 기술이 주목받고 있습니다.",
+                "오픈소스 AI 진영의 반격이 거셉니다. <strong>Llama</strong> 등 무료로 공개되는 강력한 모델들이 상용 모델의 성능을 바짝 추격하고 있습니다.",
+                "생성형 AI를 활용한 <strong>초개인화 마케팅</strong>이 본격화되고 있습니다. 사용자 데이터를 기반으로 실시간으로 맞춤형 콘텐츠를 자동 생성하는 시대입니다."
+              ];
+              const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+              return insights[dayOfYear % insights.length];
+            })()}
           </div>
         </div>
 
@@ -795,6 +807,8 @@
   }
 
   // ===== Auth Modal =====
+  let authMode = 'login'; // 'login' or 'signup'
+
   function showAuthModal() {
     let ov = $('#auth-overlay');
     if (!ov) {
@@ -804,26 +818,57 @@
             <button class="modal-close" onclick="app.hideAuthModal()">✕</button>
             <div class="auth-header">
               <div class="auth-logo">A</div>
-              <h2 class="auth-title">AI Portal에 오신 것을 환영합니다</h2>
-              <p class="auth-subtitle">소셜 계정으로 간편하게 시작하세요</p>
+              <h2 class="auth-title" id="auth-title-text">AI Portal 로그인</h2>
+              <p class="auth-subtitle" id="auth-subtitle-text">이메일로 간편하게 시작하세요</p>
             </div>
+            
+            <div style="display:flex; gap:10px; margin-bottom:20px;">
+              <button id="tab-login" onclick="app.switchAuthMode('login')" style="flex:1; padding:10px; border-radius:6px; font-weight:bold; cursor:pointer; background:var(--accent-blue); color:white; border:none;">로그인</button>
+              <button id="tab-signup" onclick="app.switchAuthMode('signup')" style="flex:1; padding:10px; border-radius:6px; font-weight:bold; cursor:pointer; background:var(--bg-tertiary); color:var(--text-primary); border:none;">회원가입</button>
+            </div>
+
             <div class="social-buttons" style="display:flex;flex-direction:column;gap:12px;padding:10px 0;">
               <input type="email" id="auth-email" placeholder="이메일 주소" style="padding:12px;border:1px solid var(--bg-tertiary);border-radius:6px;width:100%;font-size:14px;background:var(--bg-primary);color:var(--text-primary);" />
               <input type="password" id="auth-password" placeholder="비밀번호 (6자리 이상)" style="padding:12px;border:1px solid var(--bg-tertiary);border-radius:6px;width:100%;font-size:14px;background:var(--bg-primary);color:var(--text-primary);" />
-              <button class="social-btn" style="background:var(--accent-blue);color:#fff;border:none;margin-top:10px;justify-content:center;" onclick="app.emailLogin()">이메일로 간편 시작 / 로그인</button>
+              <button id="auth-submit-btn" class="social-btn" style="background:var(--text-primary);color:var(--bg-primary);border:none;margin-top:10px;justify-content:center;font-weight:bold;" onclick="app.submitAuth()">로그인</button>
             </div>
-            <div class="auth-footer" style="margin-top:16px;">처음 오셨나요? 이메일과 비밀번호를 입력하시면 <b>자동으로 1초만에 가입</b>됩니다!</div>
           </div>
         </div>`);
       ov = $('#auth-overlay');
     }
     ov.classList.add('visible');
     ov.addEventListener('click', e => { if (e.target === ov) hideAuthModal(); });
+    switchAuthMode('login');
   }
 
   function hideAuthModal() { const o = $('#auth-overlay'); if (o) o.classList.remove('visible'); }
+
+  function switchAuthMode(mode) {
+    authMode = mode;
+    const tabLogin = $('#tab-login');
+    const tabSignup = $('#tab-signup');
+    const title = $('#auth-title-text');
+    const subtitle = $('#auth-subtitle-text');
+    const btn = $('#auth-submit-btn');
+
+    if (!tabLogin) return;
+
+    if (mode === 'login') {
+      tabLogin.style.background = 'var(--accent-blue)'; tabLogin.style.color = 'white';
+      tabSignup.style.background = 'var(--bg-tertiary)'; tabSignup.style.color = 'var(--text-primary)';
+      title.innerText = 'AI Portal 로그인';
+      subtitle.innerText = '가입하신 이메일로 로그인하세요';
+      btn.innerText = '로그인';
+    } else {
+      tabSignup.style.background = 'var(--accent-blue)'; tabSignup.style.color = 'white';
+      tabLogin.style.background = 'var(--bg-tertiary)'; tabLogin.style.color = 'var(--text-primary)';
+      title.innerText = 'AI Portal 회원가입';
+      subtitle.innerText = '새로운 계정을 만들어보세요';
+      btn.innerText = '회원가입';
+    }
+  }
   
-  async function emailLogin() {
+  async function submitAuth() {
     if (!supabase) return showToast('Supabase 설정 오류', 'error');
     const email = $('#auth-email')?.value;
     const password = $('#auth-password')?.value;
@@ -832,25 +877,79 @@
       return showToast('유효한 이메일과 6자리 이상 비밀번호를 입력하세요.', 'error');
     }
     
-    showToast('로그인 처리 중...', 'info');
-    let { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    
-    // 만약 없는 계정(Invalid login credentials)이면 자동으로 회원가입 처리
-    if (error && error.message.includes('Invalid login')) {
-      const res = await supabase.auth.signUp({ email, password });
-      if (res.error) {
-        return showToast(`가입 오류: ${res.error.message}`, 'error');
+    const btn = $('#auth-submit-btn');
+    btn.disabled = true;
+    btn.innerText = '처리 중...';
+
+    if (authMode === 'login') {
+      let { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        showToast(error.message.includes('Invalid login') ? '이메일 또는 비밀번호가 틀렸습니다.' : `로그인 오류: ${error.message}`, 'error');
       } else {
-        showToast('가입 성공! 환영합니다 🎉', 'success');
+        showToast('로그인 성공! 🎉', 'success');
         hideAuthModal();
-        return;
       }
-    } else if (error) {
-      return showToast(`로그인 오류: ${error.message}`, 'error');
+    } else {
+      // Sign Up
+      let { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) {
+        showToast(`가입 오류: ${error.message}`, 'error');
+      } else {
+        showToast('가입 성공! 발송된 인증 이메일을 확인해 주세요. 📩', 'success');
+        hideAuthModal();
+      }
     }
+    btn.disabled = false;
+    btn.innerText = authMode === 'login' ? '로그인' : '회원가입';
+  }
+
+  // ===== Profile Modal (마이페이지 & 탈퇴) =====
+  function showProfileModal() {
+    let ov = $('#profile-overlay');
+    if (!ov) {
+      document.body.insertAdjacentHTML('beforeend', `
+        <div class="modal-overlay" id="profile-overlay">
+          <div class="auth-modal" style="position:relative; width:350px;">
+            <button class="modal-close" onclick="app.hideProfileModal()">✕</button>
+            <div class="auth-header" style="margin-bottom:20px;">
+              <h2 class="auth-title">내 프로필</h2>
+              <p class="auth-subtitle" id="profile-email-text"></p>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <button onclick="app.logoutUser()" style="padding:12px; background:var(--bg-tertiary); color:var(--text-primary); border-radius:6px; font-weight:bold; cursor:pointer; border:none;">로그아웃</button>
+              <button onclick="app.deleteAccount()" style="padding:12px; background:#FDEEEE; color:#D93025; border-radius:6px; font-weight:bold; cursor:pointer; border:1px solid #FAD1D1;">회원 탈퇴 (계정 삭제)</button>
+            </div>
+          </div>
+        </div>`);
+      ov = $('#profile-overlay');
+    }
+    $('#profile-email-text').innerText = currentUser?.email || '';
+    ov.classList.add('visible');
+    ov.addEventListener('click', e => { if (e.target === ov) hideProfileModal(); });
+  }
+
+  function hideProfileModal() { const o = $('#profile-overlay'); if (o) o.classList.remove('visible'); }
+
+  async function logoutUser() {
+    hideProfileModal();
+    await supabase.auth.signOut();
+    showToast('로그아웃 되었습니다.', 'info');
+  }
+
+  async function deleteAccount() {
+    if (!confirm('정말로 계정을 삭제하시겠습니까? 작성한 모든 댓글이 함께 삭제되며 복구할 수 없습니다.')) return;
     
-    showToast('로그인 성공! 🎉', 'success');
-    hideAuthModal();
+    showToast('계정 삭제 중...', 'info');
+    // Call the RPC function defined in supabase_schema.sql
+    const { error } = await supabase.rpc('delete_user');
+    
+    if (error) {
+      showToast(`탈퇴 실패: ${error.message}`, 'error');
+    } else {
+      showToast('회원 탈퇴가 완료되었습니다. 이용해 주셔서 감사합니다.', 'success');
+      await supabase.auth.signOut();
+      hideProfileModal();
+    }
   }
 
   // ===== Toast =====
@@ -1092,6 +1191,6 @@
   }
 
   // ===== Public API =====
-  window.app = { state, showDetail, notiClick, toggleBookmark, submitComment, showAuthModal, hideAuthModal, emailLogin, showSettingsModal, readNotifications, goHome, goBackToFeed, toggleKeywordAlert, showToast, refreshFeed, triggerFetch, toggleLang };
+  window.app = { state, showDetail, notiClick, toggleBookmark, submitComment, showAuthModal, hideAuthModal, switchAuthMode, submitAuth, showProfileModal, hideProfileModal, logoutUser, deleteAccount, showSettingsModal, readNotifications, goHome, goBackToFeed, toggleKeywordAlert, showToast, refreshFeed, triggerFetch, toggleLang };
   document.addEventListener('DOMContentLoaded', () => { init(); triggerMockNotification(); });
 })();
