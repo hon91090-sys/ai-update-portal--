@@ -130,9 +130,9 @@
     const btn = $('#login-trigger');
     if (!btn) return;
     if (currentUser) {
-      const name = currentUser.user_metadata?.full_name || currentUser.email || '유저';
-      const avatar = currentUser.user_metadata?.avatar_url || '';
-      btn.innerHTML = avatar ? `<img src="${avatar}" style="width:20px;height:20px;border-radius:50%;vertical-align:middle;margin-right:4px"> ${name}` : name;
+      const name = escapeHTML(currentUser.user_metadata?.full_name || currentUser.email || '유저');
+      const avatar = escapeHTML(currentUser.user_metadata?.avatar_url || '');
+      btn.innerHTML = avatar ? `<img src="${avatar}" style="width:20px;height:20px;border-radius:50%;vertical-align:middle;margin-right:4px" onerror="this.style.display='none'"> ${name}` : name;
       btn.onclick = () => app.showProfileModal();
     } else {
       btn.innerHTML = '로그인';
@@ -555,15 +555,24 @@
     if (c.is_blinded) {
       return `<div class="comment-item"><div class="comment-avatar">🚫</div><div class="comment-body"><div class="comment-blinded">🔇 많은 유저의 신고로 블라인드 처리된 댓글입니다.</div></div></div>`;
     }
+    
+    // 🛡️ SECURITY: Prevent Cross-Site Scripting (XSS)
+    const safeName = escapeHTML(c.user_name || '유저');
+    const safeText = escapeHTML(c.comment_text || '');
+    let safeAvatar = escapeHTML(c.avatar || '👤');
+    if (safeAvatar.startsWith('http')) {
+      safeAvatar = `<img src="${safeAvatar}" width="24" height="24" style="border-radius:50%; object-fit:cover;" onerror="this.outerHTML='👤'">`;
+    }
+
     return `
       <div class="comment-item">
-        <div class="comment-avatar">${c.avatar}</div>
+        <div class="comment-avatar">${safeAvatar}</div>
         <div class="comment-body">
           <div class="comment-meta">
-            <span class="comment-author">${c.user_name}</span>
+            <span class="comment-author">${safeName}</span>
             <span class="comment-time-badge">${relativeTime(c.created_at)}</span>
           </div>
-          <div class="comment-text-content">${c.comment_text}</div>
+          <div class="comment-text-content">${safeText.replace(/\n/g, '<br>')}</div>
           <div class="comment-btns">
             <button class="comment-btn">👍 좋아요</button>
             <button class="comment-btn">💬 답글</button>
