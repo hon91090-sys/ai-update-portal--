@@ -33,16 +33,83 @@ function determineCategory(title, content) {
   return 'startup'; // Default
 }
 
-// Helper: Free Google Translate API without requiring extra libraries
-async function translateText(text, targetLang = 'ko') {
+// Helper: Gemini API - Rewrite News Structure
+async function rewriteNewsStructure(title, content) {
+  const GEMINI_KEY = process.env.GEMINI_API_KEY;
+  if (!GEMINI_KEY || !content) return content; // Fallback
+
+  const prompt = `
+당신은 전문 AI 뉴스 에디터입니다. 다음 영어 기사를 읽고 아래 지침에 따라 한국어로 재작성하세요.
+
+[지침]
+1. 반드시 3개의 문단으로 나눌 것.
+2. 1문단: 가장 중요한 정보 (누가, 무엇을, 언제)
+3. 2문단: 다음으로 중요한 정보 (사실, 인용문, 배경)
+4. 3문단: 사소한 정보 (전망, 여파 등)
+5. 각 문단 앞에는 '리드', '본문', '꼬리'라는 단어를 **절대** 쓰지 말고, 해당 문단의 내용을 요약하는 센스 있는 마크다운 소제목(##)을 달아주세요.
+6. 전체 내용을 한국어로 자연스럽게 작성하세요.
+
+[기사 제목]
+${title}
+
+[기사 내용]
+${content}
+`;
+
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.7 }
+      })
+    });
+    const data = await res.json();
+    if (data.candidates && data.candidates[0].content) {
+      return data.candidates[0].content.parts[0].text;
+    }
+    return content;
+  } catch (e) {
+    console.error('Gemini rewrite error:', e.message);
+    return content;
+  }
+}
+
+// Helper: Gemini API - Generate 3-line Summary
+async function generateSummary(title, content) {
+  const GEMINI_KEY = process.env.GEMINI_API_KEY;
+  if (!GEMINI_KEY || !content) return content;
+
+  const prompt = `다음 영어 기사를 읽고, 가장 핵심이 되는 내용을 한국어로 3줄 요약하세요. 각 줄은 '- '로 시작하게 작성해주세요. \n\n기사: ${title}\n${content}`;
+  
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+    });
+    const data = await res.json();
+    if (data.candidates && data.candidates[0].content) {
+      // 3줄 요약을 배열로 변환
+      const text = data.candidates[0].content.parts[0].text;
+      return text.split('\n').filter(l => l.trim().startsWith('-')).map(l => l.replace(/^- /, '').trim());
+    }
+    return ['요약을 생성할 수 없습니다.'];
+  } catch (e) {
+    return ['요약을 생성할 수 없습니다.'];
+  }
+}
+
+// Helper: Google Translate API (For short titles)
+async function translateTitle(text) {
   if (!text) return '';
   try {
-    const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`);
+    const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=ko&dt=t&q=${encodeURIComponent(text)}`);
     const json = await res.json();
     return json[0].map(item => item[0]).join('');
   } catch(e) {
-    console.error('Translation error:', e.message);
-    return text; // Fallback to original text on error
+    return text; 
   }
 }
 
@@ -86,13 +153,13 @@ async function scrapeFeeds() {
         const category = determineCategory(item.title, item.contentSnippet || '');
         const company = determineCompany(item.title);
         
-        // Translate text using free Google API
+        // Rewrite text using Gemini API
         const enSummary = item.contentSnippet?.slice(0, 150) + '...';
         const enContent = item.content || item.contentSnippet;
         
-        const koTitle = await translateText(item.title);
-        const koSummary = await translateText(enSummary);
-        const koContent = await translateText(enContent);
+        const koTitle = await translateTitle(item.title);
+        const koSummaryLines = await generateSummary(item.title, enContent);
+        const koContentRewritten = await rewriteNewsStructure(item.title, enContent);
         
         const newPost = {
           title: { en: item.title, ko: koTitle },
@@ -101,8 +168,9 @@ async function scrapeFeeds() {
           company: company,
           status_badge: 'Free',
           tech_status: 'Stable',
-          summary: { en: enSummary, ko: koSummary },
-          content_body: { en: enContent, ko: koContent },
+          summary: { en: enSummary, ko: koSummaryLines.join(' ') },
+          summary_3lines: { en: [enSummary], ko: koSummaryLines },
+          content_body: { en: enContent, ko: koContentRewritten },
           url: item.link,
           is_important: item.title.toLowerCase().includes('announce') || item.title.toLowerCase().includes('launch'),
           views: 0
