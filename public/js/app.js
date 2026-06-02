@@ -130,7 +130,8 @@
     const btn = $('#login-trigger');
     if (!btn) return;
     if (currentUser) {
-      const name = escapeHTML(currentUser.user_metadata?.full_name || currentUser.email || '유저');
+      const defaultName = currentUser.email ? currentUser.email.split('@')[0] : '유저';
+      const name = escapeHTML(currentUser.user_metadata?.full_name || defaultName);
       const avatar = escapeHTML(currentUser.user_metadata?.avatar_url || '');
       btn.innerHTML = avatar ? `<img src="${avatar}" style="width:20px;height:20px;border-radius:50%;vertical-align:middle;margin-right:4px" onerror="this.style.display='none'"> ${name}` : name;
       btn.onclick = () => app.showProfileModal();
@@ -918,26 +919,69 @@
     if (!ov) {
       document.body.insertAdjacentHTML('beforeend', `
         <div class="modal-overlay" id="profile-overlay">
-          <div class="auth-modal" style="position:relative; width:350px;">
+          <div class="auth-modal" style="position:relative; width:360px;">
             <button class="modal-close" onclick="app.hideProfileModal()">✕</button>
             <div class="auth-header" style="margin-bottom:20px;">
               <h2 class="auth-title">내 프로필</h2>
               <p class="auth-subtitle" id="profile-email-text"></p>
             </div>
-            <div style="display:flex;flex-direction:column;gap:12px;">
-              <button onclick="app.logoutUser()" style="padding:12px; background:var(--bg-tertiary); color:var(--text-primary); border-radius:6px; font-weight:bold; cursor:pointer; border:none;">로그아웃</button>
-              <button onclick="app.showSettingsModal(); app.hideProfileModal();" style="padding:12px; background:transparent; color:var(--text-secondary); border-radius:6px; cursor:pointer; border:1px solid var(--border);">계정 설정 (회원 탈퇴)</button>
+            
+            <div style="display:flex;flex-direction:column;gap:12px; margin-bottom:20px;">
+              <div>
+                <label style="font-size:12px; color:var(--text-secondary); margin-bottom:4px; display:block;">닉네임</label>
+                <input type="text" id="profile-name-input" placeholder="이름을 입력하세요" style="padding:10px; border:1px solid var(--bg-tertiary); border-radius:6px; width:100%; font-size:14px; background:var(--bg-primary); color:var(--text-primary);" />
+              </div>
+              <div>
+                <label style="font-size:12px; color:var(--text-secondary); margin-bottom:4px; display:block;">프로필 사진 URL (선택)</label>
+                <input type="url" id="profile-avatar-input" placeholder="https://..." style="padding:10px; border:1px solid var(--bg-tertiary); border-radius:6px; width:100%; font-size:14px; background:var(--bg-primary); color:var(--text-primary);" />
+              </div>
+              <button id="profile-save-btn" onclick="app.updateProfile()" style="padding:12px; background:var(--accent-blue); color:white; border-radius:6px; font-weight:bold; cursor:pointer; border:none; margin-top:4px;">저장하기</button>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:10px; border-top:1px solid var(--border); padding-top:16px;">
+              <button onclick="app.logoutUser()" style="padding:10px; background:var(--bg-tertiary); color:var(--text-primary); border-radius:6px; font-weight:bold; cursor:pointer; border:none;">로그아웃</button>
+              <button onclick="app.showSettingsModal(); app.hideProfileModal();" style="padding:10px; background:transparent; color:var(--text-secondary); border-radius:6px; cursor:pointer; border:1px solid var(--border);">계정 설정 열기</button>
             </div>
           </div>
         </div>`);
       ov = $('#profile-overlay');
     }
     $('#profile-email-text').innerText = currentUser?.email || '';
+    $('#profile-name-input').value = currentUser?.user_metadata?.full_name || '';
+    $('#profile-avatar-input').value = currentUser?.user_metadata?.avatar_url || '';
+    
     ov.classList.add('visible');
     ov.addEventListener('click', e => { if (e.target === ov) hideProfileModal(); });
   }
 
   function hideProfileModal() { const o = $('#profile-overlay'); if (o) o.classList.remove('visible'); }
+
+  async function updateProfile() {
+    const btn = $('#profile-save-btn');
+    const newName = $('#profile-name-input').value.trim();
+    const newAvatar = $('#profile-avatar-input').value.trim();
+
+    if (!newName) return showToast('닉네임을 입력하세요.', 'error');
+    
+    btn.disabled = true;
+    btn.innerText = '저장 중...';
+
+    const { data, error } = await supabase.auth.updateUser({
+      data: { full_name: newName, avatar_url: newAvatar }
+    });
+
+    btn.disabled = false;
+    btn.innerText = '저장하기';
+
+    if (error) {
+      showToast(`저장 실패: ${error.message}`, 'error');
+    } else {
+      currentUser = data.user; 
+      updateHeaderForUser();
+      showToast('프로필이 성공적으로 업데이트되었습니다! 🎉', 'success');
+      hideProfileModal();
+    }
+  }
 
   async function logoutUser() {
     hideProfileModal();
@@ -1012,9 +1056,9 @@
             </div>
           </div>
           <div class="settings-group" id="settings-account-group" style="display:none; border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px;">
-            <div class="settings-label" style="color:#D93025;">위험 영역 (Danger Zone)</div>
+            <div class="settings-label" style="color:#D93025;">위험 영역</div>
             <div class="settings-options">
-              <button class="settings-btn" style="color:#D93025; border-color:#FAD1D1; background:#FDEEEE; width:100%; justify-content:center;" onclick="app.deleteAccount()">회원 탈퇴 (계정 영구 삭제)</button>
+              <button class="settings-btn" style="color:#D93025; border-color:#FAD1D1; background:#FDEEEE; width:100%; justify-content:center; letter-spacing: -0.02em; font-weight: 700;" onclick="app.deleteAccount()">회원 탈퇴</button>
             </div>
           </div>
         </div>
@@ -1211,6 +1255,6 @@
   }
 
   // ===== Public API =====
-  window.app = { state, showDetail, notiClick, toggleBookmark, submitComment, showAuthModal, hideAuthModal, switchAuthMode, submitAuth, showProfileModal, hideProfileModal, logoutUser, deleteAccount, showSettingsModal, readNotifications, goHome, goBackToFeed, toggleKeywordAlert, showToast, refreshFeed, triggerFetch, toggleLang };
+  window.app = { state, showDetail, notiClick, toggleBookmark, submitComment, showAuthModal, hideAuthModal, switchAuthMode, submitAuth, showProfileModal, hideProfileModal, updateProfile, logoutUser, deleteAccount, showSettingsModal, readNotifications, goHome, goBackToFeed, toggleKeywordAlert, showToast, refreshFeed, triggerFetch, toggleLang };
   document.addEventListener('DOMContentLoaded', () => { init(); triggerMockNotification(); });
 })();
