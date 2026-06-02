@@ -262,7 +262,7 @@
           return `
           <label class="company-checkbox-label" style="display:flex; align-items:center; gap:4px;">
             <input type="checkbox" value="${c}" ${state.companyFilters.includes(c) ? 'checked' : ''}>
-            <div style="width:16px; height:16px; border-radius:4px; background:${logo.bg}; color:${logo.color}; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800;">${logo.icon}</div>
+            <img src="${logo}" style="width:16px; height:16px; object-fit:contain; border-radius:4px; background:white; padding:1px;" alt="${c}" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/1/1a/Rocket_icon.svg'">
             ${c}
           </label>
         `}).join('')}
@@ -386,7 +386,7 @@
         <article class="news-card" data-id="${p.id}" style="animation:cardIn .35s ease ${i * 40}ms both">
           <div class="news-card-body">
             <div class="card-top-row">
-              <div class="card-program-logo" style="background:${logo.bg};color:${logo.color}">${logo.icon}</div>
+              <img src="${logo}" class="card-program-logo" style="object-fit:contain; background:white; padding:2px;" alt="" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/1/1a/Rocket_icon.svg'">
               <span class="card-program-name">${p.program_l2 || 'AI Tool'}</span>
               <span class="card-dot"></span>
               <span class="card-company">${companyName}</span>
@@ -459,7 +459,7 @@
           <h1 class="detail-title">${getI18nText(post.title)}</h1>
 
           <div class="detail-program-bar">
-            <div class="detail-program-icon" style="background:${logo.bg};color:${logo.color};font-size:16px;font-weight:800">${logo.icon}</div>
+            <img src="${logo}" class="detail-program-icon" style="object-fit:contain; background:white; padding:4px;" alt="" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/1/1a/Rocket_icon.svg'">
             <div>
               <div class="detail-program-name">${post.program_l2 || 'AI Tool'}</div>
               <div class="detail-program-company">${post.company_l3 || post.company || ''}</div>
@@ -621,7 +621,7 @@
               return `
                 <div class="trending-item" onclick="app.showDetail('${p.id}')" style="display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--bg-tertiary); cursor: pointer; align-items:center;">
                   <span class="trending-rank" style="font-size: 15px; font-weight: 800; color: ${i < 3 ? 'var(--accent-red)' : 'var(--text-tertiary)'}; width: 16px; text-align: center;">${i + 1}</span>
-                  <div style="width:32px; height:32px; border-radius:8px; background:${logo.bg}; color:${logo.color}; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; flex-shrink:0;">${logo.icon}</div>
+                  <img src="${logo}" style="width:32px; height:32px; border-radius:8px; object-fit:contain; background:white; padding:4px; flex-shrink:0;" alt="" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/1/1a/Rocket_icon.svg'">
                   <div class="trending-info" style="flex: 1;">
                     <div class="trending-title" style="font-size: 13.5px; font-weight: 600; line-height: 1.45; color: var(--text-primary); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 4px; letter-spacing:-0.015em;">${titleText}</div>
                     <div class="trending-meta" style="font-size: 11.5px; color: var(--text-tertiary);">
