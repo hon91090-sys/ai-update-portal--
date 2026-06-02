@@ -431,7 +431,9 @@
 
       post.views = (post.views || 0) + 1;
       if (supabase) {
-        supabase.rpc('increment_view_count', { p_id: postId }).catch(e => console.warn(e));
+        supabase.rpc('increment_view_count', { p_id: postId }).then(({error}) => {
+          if (error) console.warn("조회수 증가 실패:", error);
+        });
       }
 
       state.currentView = 'detail';
