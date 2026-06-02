@@ -289,7 +289,12 @@
           <div class="feed-header-top">
             <h1 class="feed-title">${state.currentCategory === 'all' ? getI18nText({ko: '오늘의 AI 업데이트', en: 'Today\'s AI Updates'}) : cat.emoji + ' ' + getI18nText(cat.label)}</h1>
             <div style="display:flex; align-items:center; gap:12px;">
-              ${state.currentCategory !== 'all' ? `<button class="keyword-btn ${prefs.alertKeywords.includes(state.currentCategory) ? 'active' : ''}" onclick="app.toggleKeywordAlert('${state.currentCategory}')" style="display:flex; align-items:center; gap:4px;">${prefs.alertKeywords.includes(state.currentCategory) ? '🔔 알림 받는 중' : '🔕 알림 받기'}</button>` : ''}
+              ${state.currentCategory !== 'all' ? `<button class="keyword-btn ${prefs.alertKeywords.includes(state.currentCategory) ? 'active' : ''}" onclick="app.toggleKeywordAlert('${state.currentCategory}')" style="display:flex; align-items:center; gap:6px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="${prefs.alertKeywords.includes(state.currentCategory) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                ${prefs.alertKeywords.includes(state.currentCategory) ? '알림 켜짐' : '알림 받기'}
+              </button>` : ''}
               <div class="feed-live-indicator"><span class="live-dot"></span> <span data-i18n="feed_live">${getI18nText({ko: '실시간', en: 'Live'})}</span></div>
             </div>
           </div>

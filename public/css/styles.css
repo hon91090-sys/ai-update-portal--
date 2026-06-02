@@ -45,6 +45,9 @@
   --cat-audio: #F0A840;
   --cat-data: #3DB88A;
   --cat-multi: #E06060;
+  --cat-hardware: #8D94A0;
+  --cat-startup: #F5A952;
+  --cat-policy: #8893A5;
 
   --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
@@ -650,6 +653,9 @@ input, textarea { font-family: inherit; border: none; outline: none; }
 .badge-cat[data-cat="audio"] { background: var(--cat-audio); }
 .badge-cat[data-cat="data"] { background: var(--cat-data); }
 .badge-cat[data-cat="multi"] { background: var(--cat-multi); }
+.badge-cat[data-cat="hardware"] { background: var(--cat-hardware); }
+.badge-cat[data-cat="startup"] { background: var(--cat-startup); }
+.badge-cat[data-cat="policy"] { background: var(--cat-policy); }
 
 .badge-status { background: var(--accent-green-bg); color: var(--accent-green); }
 .badge-status.paid { background: var(--accent-orange-bg); color: var(--accent-orange); }
@@ -1427,18 +1433,18 @@ body.loaded { opacity: 1; }
 .keyword-btn {
   padding: 6px 12px;
   border-radius: 20px;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border);
-  color: var(--text-primary);
+  background: transparent;
+  border: 1px solid #FBBF24;
+  color: #FBBF24;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
 }
 .keyword-btn.active {
-  background: var(--accent-blue);
+  background: #FBBF24;
   color: #FFFFFF;
-  border-color: var(--accent-blue);
+  border-color: #FBBF24;
 }
 
 /* Right sidebar collapse on small screens */
